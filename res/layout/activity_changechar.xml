@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="描述列表:"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tv_descriptor1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_descriptor2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="特征值:"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tv_charString"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_charHex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_charformat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="读取"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_write"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="写入"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_notify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始通知"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/et_notify_resualt"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:gravity="top" />
+    </ScrollView>
+
+    <RadioGroup
+        android:id="@+id/rg_hex_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/rb_hex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="十六进制" />
+
+        <RadioButton
+            android:id="@+id/rb_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="字符串" />
+    </RadioGroup>
+
+</LinearLayout>

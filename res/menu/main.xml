@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.xinzhongxinbletester.MainActivity" >
+
+    <item
+        android:id="@+id/menu_scan"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_scan"/>
+    <item
+        android:id="@+id/menu_stop"
+        android:orderInCategory="101"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_stop"/>
+
+</menu>
