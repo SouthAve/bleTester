@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				mBluetoothAdapter.stopLeScan(mLeScanCallback);
-				
+
 				BluetoothDevice device = mBleDeviceListAdapter
 						.getDevice(position);
 				final Intent intent = new Intent(MainActivity.this,
@@ -113,7 +113,7 @@ public class MainActivity extends Activity {
 						device.getAddress());
 
 				startActivity(intent);
-				
+
 			}
 		});
 	}

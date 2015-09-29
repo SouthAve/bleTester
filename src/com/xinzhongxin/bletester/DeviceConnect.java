@@ -109,11 +109,7 @@ public class DeviceConnect extends Activity {
 				// 断开后重连
 				bleService.connect(bleAddress);
 			}
-			if (BleService.ACTION_DATA_AVAILABLE.equals(action)) {
-				Toast.makeText(DeviceConnect.this,
-						intent.getExtras().getString(BleService.EXTRA_DATA),
-						Toast.LENGTH_LONG).show();
-			}
+
 
 		}
 	};

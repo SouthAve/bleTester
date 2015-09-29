@@ -71,16 +71,11 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 			viewholder = (ViewHolder) view.getTag();
 		}
 
-		// viewholder.charName.setText(chars.get(position).toString());
 		viewholder.charUUID.setText(chars.get(position).getUuid().toString());
 		viewholder.charInID.setText("Instance ID: "
 				+ chars.get(position).getInstanceId());
 		viewholder.charProperty.setText("Property: "
 				+ chars.get(position).getProperties());
-
-/*		viewholder.charPermission.setVisibility(View.VISIBLE);
-		viewholder.charPermission.setText("Permission: "
-				+ chars.get(position).getPermissions());*/
 		return view;
 	}
 

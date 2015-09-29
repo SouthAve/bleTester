@@ -1,11 +1,6 @@
 package com.xinzhongxin.bletester;
 
-import java.io.UnsupportedEncodingException;
 import java.util.UUID;
-
-import com.xinzhongxin.application.MyApplication;
-import com.xinzhongxin.service.BleService;
-import com.xinzhongxinbletester.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -20,16 +15,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.xinzhongxin.service.BleService;
+import com.xinzhongxinbletester.R;
 
 public class ChangeCharActivity extends Activity implements OnClickListener {
 	private final static String TAG = ChangeCharActivity.class.getSimpleName();
@@ -42,13 +46,21 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	Button writeButton;
 	Button readButton;
 	Button notifyButton;
-
+	EditText notify_resualt;
+	RadioGroup radioGroup;
+	RadioButton format_hex;
+	RadioButton format_string;
 	UUID charUuid;
 	UUID serUuid;
 	BleService bleService;
 	BluetoothGattCharacteristic gattChar;
+	SharedPreferences sharedPreferences;
+	SharedPreferences.Editor editor;
+	String text_hex;
+	String text_string;
 	int prop;
 	boolean startNotify;
+	boolean isHex;
 	private ServiceConnection conn = new ServiceConnection() {
 		@SuppressLint("NewApi")
 		@Override
@@ -99,7 +111,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			// TODO Auto-generated method stub
-
+			String action = intent.getAction();
 			final String des1String = intent.getExtras()
 					.getString("desriptor1");
 			final String des2String = intent.getExtras()
@@ -108,6 +120,23 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					"StringValue");
 			final String hexValue = intent.getExtras().getString("HexValue");
 			final String readTime = intent.getExtras().getString("time");
+
+			if (BleService.ACTION_DATA_AVAILABLE.equals(action)) {
+
+				text_string = intent.getExtras().getString(
+						BleService.EXTRA_DATA);
+				Toast.makeText(ChangeCharActivity.this, text_string,
+						Toast.LENGTH_LONG).show();
+				text_hex = str2HexStr(text_string);
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						notify_resualt.setText(text_string);
+					}
+				});
+			}
 
 			runOnUiThread(new Runnable() {
 
@@ -128,6 +157,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		IntentFilter mFilter = new IntentFilter();
 		mFilter.addAction(BleService.ACTION_CHAR_READED);
+		mFilter.addAction(BleService.ACTION_DATA_AVAILABLE);
 		return mFilter;
 	}
 
@@ -136,6 +166,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_changechar);
+		sharedPreferences = this
+				.getSharedPreferences("writedata", MODE_PRIVATE);
+		editor = sharedPreferences.edit();
 		init();
 		bindService(new Intent(this, BleService.class), conn, BIND_AUTO_CREATE);
 		registerReceiver(mBroadcastReceiver, makeIntentFilter());
@@ -152,7 +185,24 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		writeButton = (Button) findViewById(R.id.btn_write);
 		readButton = (Button) findViewById(R.id.btn_read);
 		notifyButton = (Button) findViewById(R.id.btn_notify);
+		notify_resualt = (EditText) findViewById(R.id.et_notify_resualt);
+		radioGroup = (RadioGroup) findViewById(R.id.rg_hex_string);
+		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
+			@Override
+			public void onCheckedChanged(RadioGroup arg0, int arg1) {
+				// TODO Auto-generated method stub
+				if (arg1 == R.id.rb_string) {
+					if (text_hex != null) {
+						notify_resualt.setText(text_hex);
+					}
+				} else {
+					if (text_string != null) {
+						notify_resualt.setText(text_string);
+					}
+				}
+			}
+		});
 		writeButton.setOnClickListener(this);
 		readButton.setOnClickListener(this);
 		notifyButton.setOnClickListener(this);
@@ -186,6 +236,202 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		unregisterReceiver(mBroadcastReceiver);
 	}
 
+	public void writeDialog() {
+		AlertDialog.Builder dialog = new Builder(this);
+		View dialogview = LayoutInflater.from(this).inflate(
+				R.layout.writedialog, null);
+		final RadioGroup writeGroup = (RadioGroup) dialogview
+				.findViewById(R.id.rg_write_format);
+		final EditText editText = (EditText) dialogview
+				.findViewById(R.id.char_value);
+		final Button btn_0 = (Button) dialogview.findViewById(R.id.btn_00);
+		final Button btn_1 = (Button) dialogview.findViewById(R.id.btn_01);
+		final Button btn_2 = (Button) dialogview.findViewById(R.id.btn_02);
+		final EditText editbtn1 = (EditText) dialogview
+				.findViewById(R.id.ed_edit_btn1);
+		final EditText editbtn2 = (EditText) dialogview
+				.findViewById(R.id.ed_edit_btn2);
+		final EditText editbtn3 = (EditText) dialogview
+				.findViewById(R.id.ed_edit_btn3);
+		btn_0.setText(sharedPreferences.getString("btn00" + charUuid, "00"));
+		btn_1.setText(sharedPreferences.getString("btn01" + charUuid, "01"));
+		btn_2.setText(sharedPreferences.getString("btn02" + charUuid, "02"));
+		writeGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup arg0, int arg1) {
+				// TODO Auto-generated method stub
+				Log.v("Tag", arg0.getCheckedRadioButtonId() + "");
+				if (arg1 == R.id.rb_write_string) {
+					isHex = false;
+					Log.v("tag", isHex + "");
+				}
+				if (arg1 == R.id.rb_write_hex) {
+					isHex = true;
+					Log.v("tag", isHex + "");
+				}
+			}
+		});
+		editbtn1.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				String btnValue = editbtn1.getText().toString();
+
+				if (!btnValue.isEmpty()) {
+					btn_0.setText(editbtn1.getText());
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+				editor.putString("btn00" + charUuid, editbtn1.getText()
+						.toString());
+				editor.commit();
+			}
+		});
+		editbtn2.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				String btnValue = editbtn2.getText().toString();
+				if (!btnValue.isEmpty()) {
+					btn_1.setText(editbtn2.getText());
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+				editor.putString("btn01" + charUuid, editbtn2.getText()
+						.toString());
+				editor.commit();
+			}
+		});
+		editbtn3.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+				String btnValue = editbtn3.getText().toString();
+
+				if (!btnValue.isEmpty()) {
+					btn_2.setText(editbtn3.getText());
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+				editor.putString("btn02" + charUuid, editbtn3.getText()
+						.toString());
+				editor.commit();
+			}
+		});
+		btn_0.setOnClickListener(new OnClickListener() {
+
+			@SuppressLint("NewApi")
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				try {
+					if (isHex) {
+						gattChar.setValue(new byte[] { Byte.parseByte(btn_0
+								.getText().toString()) });
+
+					} else {
+						gattChar.setValue(btn_0.getText().toString());
+					}
+					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+		});
+		btn_1.setOnClickListener(new OnClickListener() {
+			@SuppressLint("NewApi")
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				try {
+					if (isHex) {
+						gattChar.setValue(new byte[] { Byte.parseByte(btn_1
+								.getText().toString()) });
+
+					} else {
+						gattChar.setValue(btn_1.getText().toString());
+					}
+					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+
+			}
+		});
+		btn_2.setOnClickListener(new OnClickListener() {
+
+			@SuppressLint("NewApi")
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				try {
+					if (isHex) {
+						gattChar.setValue(new byte[] { Byte.parseByte(btn_2
+								.getText().toString()) });
+
+					} else {
+						gattChar.setValue(btn_2.getText().toString());
+					}
+					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+			}
+		});
+
+		dialog.setView(dialogview);
+		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@SuppressLint("NewApi")
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+				String charvalue = editText.getText().toString();
+				if (!charvalue.isEmpty()) {
+					gattChar.setValue(new byte[] { Byte.parseByte(charvalue) });
+					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
+				}
+			}
+		});
+		dialog.show();
+	}
+
 	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View view) {
@@ -197,24 +443,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.btn_write:
-			AlertDialog.Builder dialog = new Builder(this);
-			View dialogview = LayoutInflater.from(this).inflate(
-					R.layout.writedialog, null);
-			final EditText editText = (EditText) dialogview
-					.findViewById(R.id.char_value);
-			dialog.setView(dialogview);
-			dialog.setPositiveButton("确定",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							// TODO Auto-generated method stub
-							gattChar.setValue(new byte[] { Byte
-									.parseByte(editText.getText().toString()) });
-							bleService.mBluetoothGatt
-									.writeCharacteristic(gattChar);
-						}
-					});
-			dialog.show();
+			writeDialog();
 			break;
 		case R.id.btn_notify:
 			if (!startNotify) {
@@ -234,5 +463,22 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			}
 			break;
 		}
+	}
+
+	public static String str2HexStr(String str) {
+
+		char[] chars = "0123456789ABCDEF".toCharArray();
+		StringBuilder sb = new StringBuilder("");
+		byte[] bs = str.getBytes();
+		int bit;
+
+		for (int i = 0; i < bs.length; i++) {
+			bit = (bs[i] & 0x0f0) >> 4;
+			sb.append(chars[bit]);
+			bit = bs[i] & 0x0f;
+			sb.append(chars[bit]);
+			sb.append(' ');
+		}
+		return sb.toString().trim();
 	}
 }

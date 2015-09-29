@@ -74,8 +74,10 @@
         <EditText
             android:id="@+id/et_notify_resualt"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:gravity="top" />
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:gravity="top"
+            android:hint="此处显示通知的值" />
     </ScrollView>
 
     <RadioGroup
@@ -84,17 +86,17 @@
         android:layout_height="wrap_content" >
 
         <RadioButton
-            android:id="@+id/rb_hex"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="十六进制" />
-
-        <RadioButton
             android:id="@+id/rb_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="字符串" />
+
+        <RadioButton
+            android:id="@+id/rb_hex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="十六进制" />
     </RadioGroup>
 
 </LinearLayout>
