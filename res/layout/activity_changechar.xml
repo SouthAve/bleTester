@@ -69,21 +69,23 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="240dp" 
+        android:background="@drawable/shape">
 
         <EditText
             android:id="@+id/et_notify_resualt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:focusable="false"
             android:gravity="top"
+            android:background="#ffffff"
             android:hint="此处显示通知的值" />
     </ScrollView>
 
     <RadioGroup
         android:id="@+id/rg_hex_string"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <RadioButton
             android:id="@+id/rb_string"

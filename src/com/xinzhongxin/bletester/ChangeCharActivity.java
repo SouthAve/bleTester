@@ -56,10 +56,12 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	BluetoothGattCharacteristic gattChar;
 	SharedPreferences sharedPreferences;
 	SharedPreferences.Editor editor;
-	String text_hex;
-	String text_string;
+	String text_hex = null;
+	String text_string = null;
+	String result = null;
 	int prop;
 	boolean startNotify;
+	boolean isNotifyHex;
 	boolean isHex;
 	private ServiceConnection conn = new ServiceConnection() {
 		@SuppressLint("NewApi")
@@ -122,12 +124,16 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			final String readTime = intent.getExtras().getString("time");
 
 			if (BleService.ACTION_DATA_AVAILABLE.equals(action)) {
-
-				text_string = intent.getExtras().getString(
-						BleService.EXTRA_DATA);
-				Toast.makeText(ChangeCharActivity.this, text_string,
-						Toast.LENGTH_LONG).show();
+				result = intent.getExtras().getString(BleService.EXTRA_DATA);
+				if (text_string != null) {
+					text_string = text_string + result;
+					
+				} else {
+					text_string = result;
+					
+				}
 				text_hex = str2HexStr(text_string);
+				
 				runOnUiThread(new Runnable() {
 
 					@Override
@@ -136,6 +142,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						notify_resualt.setText(text_string);
 					}
 				});
+
 			}
 
 			runOnUiThread(new Runnable() {
@@ -193,13 +200,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onCheckedChanged(RadioGroup arg0, int arg1) {
 				// TODO Auto-generated method stub
 				if (arg1 == R.id.rb_string) {
-					if (text_hex != null) {
-						notify_resualt.setText(text_hex);
-					}
+					isNotifyHex = false;
 				} else {
-					if (text_string != null) {
-						notify_resualt.setText(text_string);
-					}
+					isNotifyHex = true;
 				}
 			}
 		});
