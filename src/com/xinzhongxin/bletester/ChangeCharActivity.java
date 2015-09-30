@@ -360,9 +360,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						gattChar.setValue(new byte[] { Byte.parseByte(btn_0
-								.getText().toString()) });
-
+						String str = hexStr2Str(btn_0.getText().toString());
+						gattChar.setValue(str);
 					} else {
 						gattChar.setValue(btn_0.getText().toString());
 					}
@@ -380,8 +379,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						gattChar.setValue(new byte[] { Byte.parseByte(btn_1
-								.getText().toString()) });
+						String str = hexStr2Str(btn_1.getText().toString());
+						gattChar.setValue(str);
 
 					} else {
 						gattChar.setValue(btn_1.getText().toString());
@@ -402,9 +401,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						gattChar.setValue(new byte[] { Byte.parseByte(btn_2
-								.getText().toString()) });
-
+						String str = hexStr2Str(btn_2.getText().toString());
+						gattChar.setValue(str);
 					} else {
 						gattChar.setValue(btn_2.getText().toString());
 					}
@@ -424,7 +422,14 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				String charvalue = editText.getText().toString();
 				if (!charvalue.isEmpty()) {
-					gattChar.setValue(new byte[] { Byte.parseByte(charvalue) });
+					if (isHex) {
+						String str = hexStr2Str(charvalue);
+						gattChar.setValue(str);
+
+					} else {
+						gattChar.setValue(charvalue);
+
+					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
 				}
 			}
@@ -480,5 +485,19 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			sb.append(' ');
 		}
 		return sb.toString().trim();
+	}
+
+	public static String hexStr2Str(String hexStr) {
+		String str = "0123456789ABCDEF";
+		char[] hexs = hexStr.toCharArray();
+		byte[] bytes = new byte[hexStr.length() / 2];
+		int n;
+
+		for (int i = 0; i < bytes.length; i++) {
+			n = str.indexOf(hexs[2 * i]) * 16;
+			n += str.indexOf(hexs[2 * i + 1]);
+			bytes[i] = (byte) (n & 0xff);
+		}
+		return new String(bytes);
 	}
 }
