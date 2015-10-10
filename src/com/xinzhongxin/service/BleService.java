@@ -47,6 +47,8 @@ public class BleService extends Service {
 	public final static String ACTION_CHAR_READED = "com.example.bluetooth.le.ACTION_CHAR_READED";
 	public final static String BATTERY_LEVEL_AVAILABLE = "com.example.bluetooth.le.BATTERY_LEVEL_AVAILABLE";
 	public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
+	public final static String EXTRA_STRING_DATA = "com.example.bluetooth.le.EXTRA_STRING_DATA";
+	public final static String EXTRA_DATA_LENGTH = "com.example.bluetooth.le.EXTRA_DATA_LENGTH";
 
 	// 集中常用的
 	public static final UUID RX_ALART_UUID = UUID
@@ -85,7 +87,6 @@ public class BleService extends Service {
 				intentAction = ACTION_GATT_DISCONNECTED;
 				mConnectionState = STATE_DISCONNECTED;
 				broadcastUpdate(intentAction);
-
 			}
 		}
 
@@ -134,9 +135,7 @@ public class BleService extends Service {
 		mIntent.putExtra("StringValue", characteristic.getStringValue(0));
 		String hexValue = MainActivity.bytesToHex(characteristic.getValue());
 		mIntent.putExtra("HexValue", hexValue.toString());
-		Log.v(TAG, characteristic.getValue().toString());
 		mIntent.putExtra("time", DateUtil.getCurrentDatatime());
-
 		sendBroadcast(mIntent);
 
 	}
@@ -159,16 +158,23 @@ public class BleService extends Service {
 		final Intent intent = new Intent();
 		intent.setAction(action);
 		final byte[] data = characteristic.getValue();
+		final String stringData = characteristic.getStringValue(0);
+
 		if (data != null && data.length > 0) {
 			final StringBuilder stringBuilder = new StringBuilder(data.length);
-			for (byte byteChar : data)
-				stringBuilder.append(String.format("%02X ", byteChar));
-/*			intent.putExtra(EXTRA_DATA,
-					new String(data) + "\n" + stringBuilder.toString());*/
-			intent.putExtra(EXTRA_DATA,
-					 stringBuilder.toString());
+			final StringBuilder stringBuilder2 = new StringBuilder(data.length);
+			for (byte byteChar : data) {
+				// 十六进制ASCII
+				stringBuilder.append(String.format("%X", byteChar));
+			}
+			if (stringData != null) {
+				intent.putExtra(EXTRA_STRING_DATA, stringData);
+			} else {
+				Log.v("tag", "characteristic.getStringValue is null");
+			}
+			intent.putExtra(EXTRA_DATA, stringBuilder.toString());
+			intent.putExtra(EXTRA_DATA_LENGTH, data.length);
 		}
-
 		sendBroadcast(intent);
 	}
 
@@ -191,7 +197,6 @@ public class BleService extends Service {
 			return false;
 		}
 		return true;
-
 	}
 
 	@SuppressLint("NewApi")
@@ -223,11 +228,9 @@ public class BleService extends Service {
 		}
 		mBluetoothGatt = device
 				.connectGatt(this, false, mBluetoothGattCallback);
-
 		mbluetoothDeviceAddress = bleAddress;
 		mConnectionState = STATE_CONNECTING;
 		return true;
-
 	}
 
 	public void disconnect() {
@@ -253,7 +256,6 @@ public class BleService extends Service {
 			mBluetoothAdapter.cancelDiscovery();
 			mBluetoothAdapter = null;
 		}
-
 	}
 
 	@Override

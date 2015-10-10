@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,9 +44,12 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	TextView charString;
 	TextView charformat;
 	TextView time;
+	TextView resultcount;
 	Button writeButton;
 	Button readButton;
+	Button clear_result;
 	Button notifyButton;
+	ScrollView scroll;
 	EditText notify_resualt;
 	RadioGroup radioGroup;
 	RadioButton format_hex;
@@ -59,6 +63,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	String text_hex = null;
 	String text_string = null;
 	String result = null;
+	String resultLength = null;
+	int resultLengthNum;
 	int prop;
 	boolean startNotify;
 	boolean isNotifyHex;
@@ -68,7 +74,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder service) {
 			// TODO Auto-generated method stub
-			Log.v(TAG, "onServiceConnected");
 			bleService = ((BleService.LocalBinder) service).getService();
 			gattChar = bleService.mBluetoothGatt.getService(serUuid)
 					.getCharacteristic(charUuid);
@@ -124,22 +129,35 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			final String readTime = intent.getExtras().getString("time");
 
 			if (BleService.ACTION_DATA_AVAILABLE.equals(action)) {
-				result = intent.getExtras().getString(BleService.EXTRA_DATA);
+				if (isNotifyHex) {
+					result = intent.getExtras()
+							.getString(BleService.EXTRA_DATA);
+				} else {
+					result = intent.getExtras().getString(
+							BleService.EXTRA_STRING_DATA);
+				}
+
+				int countNumber = intent.getExtras().getInt(
+						BleService.EXTRA_DATA_LENGTH);
+				if (resultLengthNum != 0) {
+					resultLengthNum += countNumber;
+				} else {
+					resultLengthNum = countNumber;
+				}
 				if (text_string != null) {
 					text_string = text_string + result;
-					
 				} else {
 					text_string = result;
-					
 				}
-				text_hex = str2HexStr(text_string);
-				
+				resultLength = resultLengthNum + "";
+
 				runOnUiThread(new Runnable() {
 
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
 						notify_resualt.setText(text_string);
+						resultcount.setText("字节数： " + resultLength);
 					}
 				});
 
@@ -192,7 +210,10 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		writeButton = (Button) findViewById(R.id.btn_write);
 		readButton = (Button) findViewById(R.id.btn_read);
 		notifyButton = (Button) findViewById(R.id.btn_notify);
+		clear_result = (Button) findViewById(R.id.clear_result);
 		notify_resualt = (EditText) findViewById(R.id.et_notify_resualt);
+		resultcount = (TextView) findViewById(R.id.result_count);
+		scroll = (ScrollView) findViewById(R.id.scrollview);
 		radioGroup = (RadioGroup) findViewById(R.id.rg_hex_string);
 		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -200,8 +221,20 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onCheckedChanged(RadioGroup arg0, int arg1) {
 				// TODO Auto-generated method stub
 				if (arg1 == R.id.rb_string) {
+					if (text_string != null) {
+						if (isNotifyHex) {
+							text_string = hexStr2Str(text_string);
+						}
+						notify_resualt.setText(text_string);
+					}
 					isNotifyHex = false;
 				} else {
+					if (text_string != null) {
+						if (!isNotifyHex) {
+							text_string = str2HexStr(text_string);
+						}
+						notify_resualt.setText(text_string);
+					}
 					isNotifyHex = true;
 				}
 			}
@@ -227,8 +260,24 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		}
 		if ((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
 			notifyButton.setVisibility(View.VISIBLE);
+			radioGroup.setVisibility(View.VISIBLE);
+			scroll.setVisibility(View.VISIBLE);
+			resultcount.setVisibility(View.VISIBLE);
+			clear_result.setVisibility(View.VISIBLE);
 		}
+		clear_result.setOnClickListener(new OnClickListener() {
 
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				text_string = null;
+				result = null;
+				text_hex = null;
+				notify_resualt.setText("");
+				resultLengthNum = 0;
+				resultcount.setText("字节数:0");
+			}
+		});
 	}
 
 	@Override
@@ -264,14 +313,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void onCheckedChanged(RadioGroup arg0, int arg1) {
 				// TODO Auto-generated method stub
-				Log.v("Tag", arg0.getCheckedRadioButtonId() + "");
 				if (arg1 == R.id.rb_write_string) {
 					isHex = false;
-					Log.v("tag", isHex + "");
 				}
 				if (arg1 == R.id.rb_write_hex) {
 					isHex = true;
-					Log.v("tag", isHex + "");
 				}
 			}
 		});
@@ -334,7 +380,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					int arg3) {
 				// TODO Auto-generated method stub
 				String btnValue = editbtn3.getText().toString();
-
 				if (!btnValue.isEmpty()) {
 					btn_2.setText(editbtn3.getText());
 				}
@@ -393,7 +438,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					// TODO: handle exception
 					e.printStackTrace();
 				}
-
 			}
 		});
 		btn_2.setOnClickListener(new OnClickListener() {
@@ -428,10 +472,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					if (isHex) {
 						String str = hexStr2Str(charvalue);
 						gattChar.setValue(str);
-
 					} else {
 						gattChar.setValue(charvalue);
-
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
 				}
@@ -447,26 +489,20 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		switch (view.getId()) {
 		case R.id.btn_read:
 			bleService.mBluetoothGatt.readCharacteristic(gattChar);
-			Log.v(TAG, "btn_read");
 			break;
-
 		case R.id.btn_write:
 			writeDialog();
 			break;
 		case R.id.btn_notify:
 			if (!startNotify) {
-				// 开始状态就做开始的逻辑
 				bleService.mBluetoothGatt.setCharacteristicNotification(
 						gattChar, true);
-				// 将状态设为开始
 				startNotify = true;
-				// 改变按钮显示
 				notifyButton.setText("停止通知");
 			} else {
 				bleService.mBluetoothGatt.setCharacteristicNotification(
 						gattChar, false);
 				startNotify = false;
-				// 改变按钮显示
 				notifyButton.setText("开始通知");
 			}
 			break;
@@ -485,7 +521,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			sb.append(chars[bit]);
 			bit = bs[i] & 0x0f;
 			sb.append(chars[bit]);
-			sb.append(' ');
 		}
 		return sb.toString().trim();
 	}
@@ -495,7 +530,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		char[] hexs = hexStr.toCharArray();
 		byte[] bytes = new byte[hexStr.length() / 2];
 		int n;
-
 		for (int i = 0; i < bytes.length; i++) {
 			n = str.indexOf(hexs[2 * i]) * 16;
 			n += str.indexOf(hexs[2 * i + 1]);

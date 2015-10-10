@@ -46,46 +46,79 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_read"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="读取"
-        android:visibility="gone" />
+        android:layout_height="wrap_content" >
 
-    <Button
-        android:id="@+id/btn_write"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="写入"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/btn_read"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="读取"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btn_notify"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="开始通知"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/btn_write"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="写入"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_notify"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="开始通知"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
-        android:layout_height="240dp" 
-        android:background="@drawable/shape">
+        android:layout_height="200dp"
+        android:background="@drawable/shape"
+        android:visibility="invisible" >
 
         <EditText
             android:id="@+id/et_notify_resualt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="top"
             android:background="#ffffff"
+            android:gravity="top"
             android:hint="此处显示通知的值" />
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/result_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="字节数:0"
+            android:textSize="15dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/clear_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空"
+            android:textSize="15dp"
+            android:visibility="invisible" />
+    </LinearLayout>
 
     <RadioGroup
         android:id="@+id/rg_hex_string"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="invisible" >
 
         <RadioButton
             android:id="@+id/rb_string"
