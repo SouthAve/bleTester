@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -162,7 +161,6 @@ public class BleService extends Service {
 
 		if (data != null && data.length > 0) {
 			final StringBuilder stringBuilder = new StringBuilder(data.length);
-			final StringBuilder stringBuilder2 = new StringBuilder(data.length);
 			for (byte byteChar : data) {
 				// Ê®Áù½øÖÆASCII
 				stringBuilder.append(String.format("%X", byteChar));
