@@ -1,8 +1,10 @@
 package com.xinzhongxin.bletester;
 
+import java.io.ByteArrayOutputStream;
 import java.text.Format;
 import java.util.UUID;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -322,6 +324,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			radio1.setChecked(true);
 			radio2.setChecked(false);
 		}
+
 		writeGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -422,7 +425,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				try {
 					if (isHex) {
 						String transStr = btn_0.getText().toString();
-						gattChar.setValue(hexStr2Byte(transStr));
+						gattChar.setValue(str2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_0.getText().toString());
 					}
@@ -441,7 +444,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				try {
 					if (isHex) {
 						String transStr = btn_1.getText().toString();
-						gattChar.setValue(hexStr2Byte(transStr));
+						gattChar.setValue(str2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_1.getText().toString());
 					}
@@ -461,7 +464,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				try {
 					if (isHex) {
 						String transStr = btn_2.getText().toString();
-						gattChar.setValue(hexStr2Byte(transStr));
+						gattChar.setValue(str2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_2.getText().toString());
 					}
@@ -482,7 +485,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				String charvalue = editText.getText().toString();
 				if (!charvalue.isEmpty()) {
 					if (isHex) {
-						String str = hexStr2Str(charvalue);
+						byte[] str = str2Byte(charvalue);
 						gattChar.setValue(str);
 					} else {
 						gattChar.setValue(charvalue);
@@ -546,19 +549,23 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			n = str.indexOf(hexs[2 * i]) * 16;
 			n += str.indexOf(hexs[2 * i + 1]);
 			bytes[i] = (byte) (n & 0xff);
+			System.out.println(bytes[i]);
 		}
 		return new String(bytes);
 	}
 
-	public static byte[] hexStr2Byte(String hexStr) {
-		String str = "0123456789ABCDEF";
+	public static byte[] str2Byte(String hexStr) {
+		String[] a = new String[hexStr.length() / 2];
+
 		char[] hexs = hexStr.toCharArray();
 		byte[] bytes = new byte[hexStr.length() / 2];
-		char n;
 		for (int i = 0; i < bytes.length; i++) {
-			n = hexs[i];
-			bytes[i] = (byte) (n);
-			System.out.println(n);
+			a[i] = hexStr.substring(2 * i, 2 * i + 2);
+			System.out.println(a[i].toString());
+		}
+		for (int i = 0; i < bytes.length; i++) {
+			bytes[i] = (byte) Integer.parseInt(a[i], 16);
+			System.out.println(bytes[i]);
 		}
 		return bytes;
 	}
