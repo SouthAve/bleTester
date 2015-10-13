@@ -1,5 +1,6 @@
 package com.xinzhongxin.bletester;
 
+import java.text.Format;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -134,7 +136,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					result = intent.getExtras().getString(
 							BleService.EXTRA_STRING_DATA);
 				}
-
 				int countNumber = intent.getExtras().getInt(
 						BleService.EXTRA_DATA_LENGTH);
 				if (resultLengthNum != 0) {
@@ -148,9 +149,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					text_string = result;
 				}
 				resultLength = resultLengthNum + "";
-
 				runOnUiThread(new Runnable() {
-
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
@@ -213,6 +212,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		resultcount = (TextView) findViewById(R.id.result_count);
 		scroll = (ScrollView) findViewById(R.id.scrollview);
 		radioGroup = (RadioGroup) findViewById(R.id.rg_hex_string);
+
 		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -286,6 +286,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		unregisterReceiver(mBroadcastReceiver);
 	}
 
+	/**
+	 * 
+	 */
 	public void writeDialog() {
 		AlertDialog.Builder dialog = new Builder(this);
 		View dialogview = LayoutInflater.from(this).inflate(
@@ -297,6 +300,10 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		final Button btn_0 = (Button) dialogview.findViewById(R.id.btn_00);
 		final Button btn_1 = (Button) dialogview.findViewById(R.id.btn_01);
 		final Button btn_2 = (Button) dialogview.findViewById(R.id.btn_02);
+		final RadioButton radio1 = (RadioButton) dialogview
+				.findViewById(R.id.rb_write_string);
+		final RadioButton radio2 = (RadioButton) dialogview
+				.findViewById(R.id.rb_write_hex);
 		final EditText editbtn1 = (EditText) dialogview
 				.findViewById(R.id.ed_edit_btn1);
 		final EditText editbtn2 = (EditText) dialogview
@@ -306,6 +313,15 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		btn_0.setText(sharedPreferences.getString("btn00" + charUuid, "00"));
 		btn_1.setText(sharedPreferences.getString("btn01" + charUuid, "01"));
 		btn_2.setText(sharedPreferences.getString("btn02" + charUuid, "02"));
+		if (sharedPreferences.getBoolean("isHex", false)) {
+			isHex = true;
+			radio2.setChecked(true);
+			radio1.setChecked(false);
+		} else {
+			isHex = false;
+			radio1.setChecked(true);
+			radio2.setChecked(false);
+		}
 		writeGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -313,10 +329,13 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				if (arg1 == R.id.rb_write_string) {
 					isHex = false;
+					editor.putBoolean("isHex", false);
 				}
 				if (arg1 == R.id.rb_write_hex) {
 					isHex = true;
+					editor.putBoolean("isHex", true);
 				}
+				editor.commit();
 			}
 		});
 		editbtn1.addTextChangedListener(new TextWatcher() {
@@ -325,7 +344,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					int arg3) {
 				// TODO Auto-generated method stub
 				String btnValue = editbtn1.getText().toString();
-
 				if (!btnValue.isEmpty()) {
 					btn_0.setText(editbtn1.getText());
 				}
@@ -335,7 +353,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -361,7 +378,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -387,7 +403,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -406,8 +421,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						String str = hexStr2Str(btn_0.getText().toString());
-						gattChar.setValue(str);
+						String transStr = btn_0.getText().toString();
+						gattChar.setValue(hexStr2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_0.getText().toString());
 					}
@@ -425,9 +440,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						String str = hexStr2Str(btn_1.getText().toString());
-						gattChar.setValue(str);
-
+						String transStr = btn_1.getText().toString();
+						gattChar.setValue(hexStr2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_1.getText().toString());
 					}
@@ -446,8 +460,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				try {
 					if (isHex) {
-						String str = hexStr2Str(btn_2.getText().toString());
-						gattChar.setValue(str);
+						String transStr = btn_2.getText().toString();
+						gattChar.setValue(hexStr2Byte(transStr));
 					} else {
 						gattChar.setValue(btn_2.getText().toString());
 					}
@@ -534,5 +548,18 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			bytes[i] = (byte) (n & 0xff);
 		}
 		return new String(bytes);
+	}
+
+	public static byte[] hexStr2Byte(String hexStr) {
+		String str = "0123456789ABCDEF";
+		char[] hexs = hexStr.toCharArray();
+		byte[] bytes = new byte[hexStr.length() / 2];
+		int n;
+		for (int i = 0; i < bytes.length; i++) {
+			n = str.indexOf(hexs[2 * i]) * 10;
+			n += str.indexOf(hexs[2 * i + 1]);
+			bytes[i] = (byte) (n);
+		}
+		return bytes;
 	}
 }
