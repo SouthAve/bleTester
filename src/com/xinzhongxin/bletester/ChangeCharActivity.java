@@ -555,8 +555,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	}
 
 	public static byte[] str2Byte(String hexStr) {
+		int b = hexStr.length() % 2;
+		if (b != 0) {
+			hexStr = "0" + hexStr;
+		}
 		String[] a = new String[hexStr.length() / 2];
-
 		char[] hexs = hexStr.toCharArray();
 		byte[] bytes = new byte[hexStr.length() / 2];
 		for (int i = 0; i < bytes.length; i++) {
