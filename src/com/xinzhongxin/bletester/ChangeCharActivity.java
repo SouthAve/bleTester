@@ -554,11 +554,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		String str = "0123456789ABCDEF";
 		char[] hexs = hexStr.toCharArray();
 		byte[] bytes = new byte[hexStr.length() / 2];
-		int n;
+		char n;
 		for (int i = 0; i < bytes.length; i++) {
-			n = str.indexOf(hexs[2 * i]) * 10;
-			n += str.indexOf(hexs[2 * i + 1]);
+			n = hexs[i];
 			bytes[i] = (byte) (n);
+			System.out.println(n);
 		}
 		return bytes;
 	}
