@@ -1,10 +1,7 @@
 package com.xinzhongxin.bletester;
 
-import java.io.ByteArrayOutputStream;
-import java.text.Format;
 import java.util.UUID;
 
-import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,7 +20,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.text.method.NumberKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,6 +31,7 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xinzhongxin.service.BleService;
 import com.xinzhongxinbletester.R;
@@ -71,6 +69,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	boolean startNotify;
 	boolean isNotifyHex;
 	boolean isHex;
+
 	private ServiceConnection conn = new ServiceConnection() {
 		@SuppressLint("NewApi")
 		@Override
@@ -312,6 +311,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				.findViewById(R.id.ed_edit_btn2);
 		final EditText editbtn3 = (EditText) dialogview
 				.findViewById(R.id.ed_edit_btn3);
+
 		btn_0.setText(sharedPreferences.getString("btn00" + charUuid, "00"));
 		btn_1.setText(sharedPreferences.getString("btn01" + charUuid, "01"));
 		btn_2.setText(sharedPreferences.getString("btn02" + charUuid, "02"));
@@ -346,23 +346,26 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-				String btnValue = editbtn1.getText().toString();
-				if (!btnValue.isEmpty()) {
-					btn_0.setText(editbtn1.getText());
-				}
+
 			}
 
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
+
 			}
 
 			@Override
 			public void afterTextChanged(Editable arg0) {
 				// TODO Auto-generated method stub
-				editor.putString("btn00" + charUuid, editbtn1.getText()
-						.toString());
+				checkInputkey(arg0);
+				String str = arg0.toString();
+				if (arg0.length() > 0) {
+
+					btn_0.setText(str);
+				}
+				editor.putString("btn00" + charUuid, str);
 				editor.commit();
 			}
 		});
@@ -371,10 +374,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-				String btnValue = editbtn2.getText().toString();
-				if (!btnValue.isEmpty()) {
-					btn_1.setText(editbtn2.getText());
-				}
+
 			}
 
 			@Override
@@ -386,8 +386,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void afterTextChanged(Editable arg0) {
 				// TODO Auto-generated method stub
-				editor.putString("btn01" + charUuid, editbtn2.getText()
-						.toString());
+				checkInputkey(arg0);
+				if (arg0.length() > 0) {
+					btn_0.setText(arg0);
+				}
+				editor.putString("btn01" + charUuid, arg0.toString());
 				editor.commit();
 			}
 		});
@@ -396,9 +399,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-				String btnValue = editbtn3.getText().toString();
-				if (!btnValue.isEmpty()) {
-					btn_2.setText(editbtn3.getText());
+				if (arg0.length() > 0) {
+					btn_2.setText(arg0);
 				}
 			}
 
@@ -411,8 +413,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void afterTextChanged(Editable arg0) {
 				// TODO Auto-generated method stub
-				editor.putString("btn02" + charUuid, editbtn3.getText()
-						.toString());
+				checkInputkey(arg0);
+				if (arg0.length() > 0) {
+					btn_0.setText(arg0);
+				}
+				editor.putString("btn02" + charUuid, arg0.toString());
 				editor.commit();
 			}
 		});
@@ -497,6 +502,20 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		dialog.show();
 	}
 
+	private void checkInputkey(Editable arg0) {
+		if (isHex && arg0.length() > 0) {
+			int pos = arg0.length() - 1;
+			for (int i = 0; i < arg0.length(); i++) {
+				char c = arg0.charAt(i);
+				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')
+						|| (c >= 'A' && c <= 'F')) {
+				} else {
+					arg0.delete(pos, pos + 1);
+				}
+			}
+		}
+	}
+
 	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View view) {
@@ -571,4 +590,5 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		}
 		return bytes;
 	}
+
 }

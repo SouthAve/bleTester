@@ -77,6 +77,7 @@
             android:id="@+id/ed_edit_btn3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+           
             android:hint="编辑按键3的值" />
     </LinearLayout>
 
