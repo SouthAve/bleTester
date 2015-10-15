@@ -362,7 +362,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				checkInputkey(arg0);
 				String str = arg0.toString();
 				if (arg0.length() > 0) {
-
 					btn_0.setText(str);
 				}
 				editor.putString("btn00" + charUuid, str);
@@ -388,7 +387,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				checkInputkey(arg0);
 				if (arg0.length() > 0) {
-					btn_0.setText(arg0);
+					btn_1.setText(arg0);
 				}
 				editor.putString("btn01" + charUuid, arg0.toString());
 				editor.commit();
@@ -399,9 +398,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-				if (arg0.length() > 0) {
-					btn_2.setText(arg0);
-				}
+
 			}
 
 			@Override
@@ -415,7 +412,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				checkInputkey(arg0);
 				if (arg0.length() > 0) {
-					btn_0.setText(arg0);
+					btn_2.setText(arg0);
 				}
 				editor.putString("btn02" + charUuid, arg0.toString());
 				editor.commit();
@@ -427,12 +424,15 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				String transStr = btn_0.getText().toString();
 				try {
 					if (isHex) {
-						String transStr = btn_0.getText().toString();
 						gattChar.setValue(str2Byte(transStr));
 					} else {
-						gattChar.setValue(btn_0.getText().toString());
+						if (transStr.contains("\n")) {
+							transStr = transStr.replace("\n", "\r\n");
+						}
+						gattChar.setValue(transStr);
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
 				} catch (Exception e) {
@@ -446,12 +446,15 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				String transStr = btn_1.getText().toString();
 				try {
 					if (isHex) {
-						String transStr = btn_1.getText().toString();
 						gattChar.setValue(str2Byte(transStr));
 					} else {
-						gattChar.setValue(btn_1.getText().toString());
+						if (transStr.contains("\n")) {
+							transStr = transStr.replace("\n", "\r\n");
+						}
+						gattChar.setValue(transStr);
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
 				} catch (Exception e) {
@@ -466,12 +469,15 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				String transStr = btn_2.getText().toString();
 				try {
 					if (isHex) {
-						String transStr = btn_2.getText().toString();
 						gattChar.setValue(str2Byte(transStr));
 					} else {
-						gattChar.setValue(btn_2.getText().toString());
+						if (transStr.contains("\n")) {
+							transStr = transStr.replace("\n", "\r\n");
+						}
+						gattChar.setValue(transStr);
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
 				} catch (Exception e) {
