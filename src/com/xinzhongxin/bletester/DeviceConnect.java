@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.xinzhongxin.adapter.BleSevicesListAdapter;
@@ -96,11 +97,9 @@ public class DeviceConnect extends Activity {
 			}
 			if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				runOnUiThread(new Runnable() {
-
 					@SuppressLint("NewApi")
 					public void run() {
 						// TODO Auto-generated method stub
-
 						gattServices = bleService.mBluetoothGatt.getServices();
 						servicesListAdapter.addService(gattServices);
 						servicesListAdapter.notifyDataSetChanged();
@@ -109,8 +108,6 @@ public class DeviceConnect extends Activity {
 				// 断开后重连
 				bleService.connect(bleAddress);
 			}
-
-
 		}
 	};
 
@@ -150,6 +147,7 @@ public class DeviceConnect extends Activity {
 
 	private void init() {
 		serviceList = (ListView) findViewById(R.id.lv_deviceList);
+		serviceList.setEmptyView(findViewById(R.id.pb_empty));
 		servicesListAdapter = new BleSevicesListAdapter(this);
 		serviceList.setAdapter(servicesListAdapter);
 		bleAddress = getIntent().getExtras().getString((EXTRAS_DEVICE_ADDRESS));

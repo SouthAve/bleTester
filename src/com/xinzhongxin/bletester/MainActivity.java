@@ -19,12 +19,14 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.xinzhongxin.adapter.BleDeviceListAdapter;
+import com.xinzhongxin.customview.MyListView;
 import com.xinzhongxinbletester.R;
 
 public class MainActivity extends Activity {
-	ListView listView;
+	MyListView listView;
 
 	BluetoothAdapter mBluetoothAdapter;
 	private LeScanCallback mLeScanCallback;
@@ -47,9 +49,11 @@ public class MainActivity extends Activity {
 
 	private void init() {
 		// TODO Auto-generated method stub
-		listView = (ListView) findViewById(R.id.lv_deviceList);
+		listView = (MyListView) findViewById(R.id.lv_deviceList);
+		listView.setEmptyView(findViewById(R.id.pb_empty));
 		mBleDeviceListAdapter = new BleDeviceListAdapter(this);
 		listView.setAdapter(mBleDeviceListAdapter);
+
 		setListItemListener();
 	}
 
@@ -58,6 +62,7 @@ public class MainActivity extends Activity {
 		final BluetoothManager bluetoothManager = (BluetoothManager) this
 				.getSystemService(Context.BLUETOOTH_SERVICE);
 		mBluetoothAdapter = bluetoothManager.getAdapter();
+
 	}
 
 	@SuppressLint("NewApi")

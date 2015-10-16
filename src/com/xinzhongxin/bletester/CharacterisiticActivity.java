@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -37,7 +38,7 @@ public class CharacterisiticActivity extends Activity {
 			// TODO Auto-generated method stub
 			bleSevice = ((BleService.LocalBinder) service).getService();
 			gattService = bleSevice.mBluetoothGatt.getService(uuid);
-			
+
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -68,6 +69,7 @@ public class CharacterisiticActivity extends Activity {
 	@SuppressLint("NewApi")
 	private void init() {
 		lv = (ListView) findViewById(R.id.lv_deviceList);
+		lv.setEmptyView(findViewById(R.id.pb_empty));
 		charListAdapter = new CharacterisiticListAdapter(this);
 		lv.setAdapter(charListAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -90,7 +92,6 @@ public class CharacterisiticActivity extends Activity {
 				startActivity(mIntent);
 			}
 		});
-		
 
 	}
 
