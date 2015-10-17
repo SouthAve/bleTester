@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
 		listView = (MyListView) findViewById(R.id.lv_deviceList);
 		listView.setEmptyView(findViewById(R.id.pb_empty));
 		swagLayout = (SwipeRefreshLayout) findViewById(R.id.swagLayout);
+		swagLayout.setVisibility(View.VISIBLE);
 		swagLayout.setOnRefreshListener(new OnRefreshListener() {
 
 			@SuppressLint("NewApi")

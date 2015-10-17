@@ -1,16 +1,11 @@
 package com.xinzhongxin.bletester;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattServer;
 import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,18 +14,17 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.xinzhongxin.adapter.BleSevicesListAdapter;
-import com.xinzhongxin.application.MyApplication;
 import com.xinzhongxin.service.BleService;
 import com.xinzhongxinbletester.R;
 
@@ -46,6 +40,7 @@ public class DeviceConnect extends Activity {
 	public static final String DEVICE_BATTERY = "device.battery.level";
 
 	ListView serviceList;
+	SwipeRefreshLayout swagLayout;
 	BleSevicesListAdapter servicesListAdapter;
 	Intent intent;
 	String bleAddress;
@@ -149,6 +144,19 @@ public class DeviceConnect extends Activity {
 		serviceList = (ListView) findViewById(R.id.lv_deviceList);
 		serviceList.setEmptyView(findViewById(R.id.pb_empty));
 		servicesListAdapter = new BleSevicesListAdapter(this);
+		swagLayout = (SwipeRefreshLayout) findViewById(R.id.swagLayout);
+		swagLayout.setOnRefreshListener(new OnRefreshListener() {
+
+			@SuppressLint("NewApi")
+			@Override
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				servicesListAdapter.clear();
+				bleService.mBluetoothGatt.discoverServices();
+				servicesListAdapter.notifyDataSetChanged();
+				swagLayout.setRefreshing(false);
+			}
+		});
 		serviceList.setAdapter(servicesListAdapter);
 		bleAddress = getIntent().getExtras().getString((EXTRAS_DEVICE_ADDRESS));
 		serviceList.setOnItemClickListener(new OnItemClickListener() {
@@ -203,7 +211,6 @@ public class DeviceConnect extends Activity {
 		if (item.getItemId() == R.id.menu_services) {
 			// TODO Auto-generated method stub
 			servicesListAdapter.clear();
-
 			bleService.mBluetoothGatt.discoverServices();
 			servicesListAdapter.notifyDataSetChanged();
 

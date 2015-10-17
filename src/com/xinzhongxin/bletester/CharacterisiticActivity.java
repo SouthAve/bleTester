@@ -59,7 +59,7 @@ public class CharacterisiticActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_chars);
 		getActionBar().setTitle("特性列表");
 		uuid = (UUID) getIntent().getExtras().get("serviceUUID");
 		init();
@@ -68,8 +68,8 @@ public class CharacterisiticActivity extends Activity {
 
 	@SuppressLint("NewApi")
 	private void init() {
-		lv = (ListView) findViewById(R.id.lv_deviceList);
-		lv.setEmptyView(findViewById(R.id.pb_empty));
+		lv = (ListView) findViewById(R.id.lv_charList);
+		lv.setEmptyView(findViewById(R.id.pb_empty2));
 		charListAdapter = new CharacterisiticListAdapter(this);
 		lv.setAdapter(charListAdapter);
 		lv.setOnItemClickListener(new OnItemClickListener() {
