@@ -4,11 +4,17 @@
     android:layout_height="match_parent"
     tools:context="com.xinzhongxin.bletester.MainActivity" >
 
-    <com.xinzhongxin.customview.MyListView
-        android:id="@+id/lv_deviceList"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swagLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </com.xinzhongxin.customview.MyListView>
+
+        <com.xinzhongxin.customview.MyListView
+            android:id="@+id/lv_deviceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </com.xinzhongxin.customview.MyListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/pb_empty"

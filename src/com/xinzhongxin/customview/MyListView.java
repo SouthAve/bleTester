@@ -1,15 +1,13 @@
 package com.xinzhongxin.customview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ListView;
 
 public class MyListView extends ListView {
 	private Context mContext;
-	private static final int mMaxOverDistance = 100;
+	private static final int mMaxOverDistance = 30;
 	private int mMaxYOverscrollDistance;
 
 	public MyListView(Context context) {

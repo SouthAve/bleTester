@@ -3,23 +3,20 @@ package com.xinzhongxin.bletester;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothAdapter.LeScanCallback;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.xinzhongxin.adapter.BleDeviceListAdapter;
 import com.xinzhongxin.customview.MyListView;
@@ -27,7 +24,7 @@ import com.xinzhongxinbletester.R;
 
 public class MainActivity extends Activity {
 	MyListView listView;
-
+	SwipeRefreshLayout swagLayout;
 	BluetoothAdapter mBluetoothAdapter;
 	private LeScanCallback mLeScanCallback;
 	BleDeviceListAdapter mBleDeviceListAdapter;
@@ -51,6 +48,19 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		listView = (MyListView) findViewById(R.id.lv_deviceList);
 		listView.setEmptyView(findViewById(R.id.pb_empty));
+		swagLayout = (SwipeRefreshLayout) findViewById(R.id.swagLayout);
+		swagLayout.setOnRefreshListener(new OnRefreshListener() {
+
+			@SuppressLint("NewApi")
+			@Override
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				mBleDeviceListAdapter.clear();
+				mBluetoothAdapter.startLeScan(mLeScanCallback);
+				scanning = true;
+				swagLayout.setRefreshing(false);
+			}
+		});
 		mBleDeviceListAdapter = new BleDeviceListAdapter(this);
 		listView.setAdapter(mBleDeviceListAdapter);
 
@@ -67,9 +77,7 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("NewApi")
 	private void getScanResualt() {
-
 		mLeScanCallback = new LeScanCallback() {
-
 			@Override
 			public void onLeScan(final BluetoothDevice device, final int rssi,
 					final byte[] scanRecord) {
@@ -78,7 +86,6 @@ public class MainActivity extends Activity {
 						mBleDeviceListAdapter.addDevice(device, rssi,
 								bytesToHex(scanRecord));
 						mBleDeviceListAdapter.notifyDataSetChanged();
-
 					}
 				});
 
