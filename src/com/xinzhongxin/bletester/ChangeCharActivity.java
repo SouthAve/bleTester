@@ -181,7 +181,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					}
 				});
 			}
-
+			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
+				Toast.makeText(ChangeCharActivity.this, "设备连接断开",
+						Toast.LENGTH_SHORT).show();
+				bleService.connect(DeviceConnect.bleAddress);
+			}
 		}
 	};
 

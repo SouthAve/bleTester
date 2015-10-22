@@ -1,6 +1,7 @@
 package com.xinzhongxin.bletester;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.xinzhongxin.adapter.BleSevicesListAdapter;
 import com.xinzhongxin.service.BleService;
+import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 public class DeviceConnect extends Activity {
@@ -43,7 +45,7 @@ public class DeviceConnect extends Activity {
 	SwipeRefreshLayout swagLayout;
 	BleSevicesListAdapter servicesListAdapter;
 	Intent intent;
-	String bleAddress;
+	public static String bleAddress;
 	boolean isConnecting = false;
 	boolean isAlarm = false;
 	List<BluetoothGattService> gattServices = new ArrayList<BluetoothGattService>();
@@ -93,12 +95,23 @@ public class DeviceConnect extends Activity {
 				bleService.connect(bleAddress);
 			}
 			if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+				String uuid = null;
 				bleService.mBluetoothGatt.readRemoteRssi();
+				gattServices = bleService.mBluetoothGatt.getServices();
+				final ArrayList<HashMap<String, String>> serviceNames = new ArrayList<HashMap<String, String>>();
+				for (BluetoothGattService ser : gattServices) {
+					HashMap<String, String> currentServiceData = new HashMap<String, String>();
+					uuid = ser.getUuid().toString().toUpperCase();
+					currentServiceData.put("Name", Utils.BLE_SERVICES
+							.containsValue(uuid) ? Utils.BLE_SERVICES.get(uuid)
+							: "UnknownService");
+					serviceNames.add(currentServiceData);
+				}
 				runOnUiThread(new Runnable() {
 					@SuppressLint("NewApi")
 					public void run() {
 						// TODO Auto-generated method stub
-						gattServices = bleService.mBluetoothGatt.getServices();
+						servicesListAdapter.addServiceNames(serviceNames);
 						servicesListAdapter.addService(gattServices);
 						servicesListAdapter.notifyDataSetChanged();
 					}
@@ -109,7 +122,6 @@ public class DeviceConnect extends Activity {
 				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
 				DeviceConnect.this.invalidateOptionsMenu();
 			}
-
 		}
 	};
 

@@ -1,6 +1,7 @@
 package com.xinzhongxin.adapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.xinzhongxin.adapter.BleDeviceListAdapter.ViewHolder;
@@ -22,6 +23,7 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 	private final static String TAG = CharacterisiticListAdapter.class
 			.getSimpleName();
 	ArrayList<BluetoothGattCharacteristic> chars;
+	ArrayList<HashMap<String, String>> charNames;
 	LayoutInflater mInflater;
 
 	public CharacterisiticListAdapter(Context context) {
@@ -70,7 +72,7 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 		} else {
 			viewholder = (ViewHolder) view.getTag();
 		}
-
+		viewholder.charName.setText(charNames.get(position).get("Name"));
 		viewholder.charUUID.setText(chars.get(position).getUuid().toString());
 		viewholder.charInID.setText("Instance ID: "
 				+ chars.get(position).getInstanceId());
@@ -84,11 +86,21 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 		this.chars = (ArrayList<BluetoothGattCharacteristic>) characteristics;
 	}
 
+	public void addCharNames(List<HashMap<String, String>> charNames) {
+		// TODO Auto-generated method stub
+		this.charNames = (ArrayList<HashMap<String, String>>) charNames;
+	}
+
 	static class ViewHolder {
 		TextView charName;
 		TextView charUUID;
 		TextView charInID;
 		TextView charProperty;
 		TextView charPermission;
+	}
+
+	public void addCharNames() {
+		// TODO Auto-generated method stub
+
 	}
 }

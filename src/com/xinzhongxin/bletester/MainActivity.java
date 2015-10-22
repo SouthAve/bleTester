@@ -1,5 +1,8 @@
 package com.xinzhongxin.bletester;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -31,6 +34,8 @@ public class MainActivity extends Activity {
 	private boolean scanning = true;
 
 	Handler handler;
+
+	Timer timer = new Timer();
 
 	@SuppressLint("NewApi")
 	@Override
@@ -64,7 +69,6 @@ public class MainActivity extends Activity {
 		});
 		mBleDeviceListAdapter = new BleDeviceListAdapter(this);
 		listView.setAdapter(mBleDeviceListAdapter);
-
 		setListItemListener();
 	}
 
@@ -73,7 +77,6 @@ public class MainActivity extends Activity {
 		final BluetoothManager bluetoothManager = (BluetoothManager) this
 				.getSystemService(Context.BLUETOOTH_SERVICE);
 		mBluetoothAdapter = bluetoothManager.getAdapter();
-
 	}
 
 	@SuppressLint("NewApi")
@@ -122,7 +125,6 @@ public class MainActivity extends Activity {
 						device.getName());
 				intent.putExtra(DeviceConnect.EXTRAS_DEVICE_ADDRESS,
 						device.getAddress());
-
 				startActivity(intent);
 				onDestroy();
 			}
@@ -138,15 +140,7 @@ public class MainActivity extends Activity {
 		mBleDeviceListAdapter.clear();
 		scanning = false;
 		mBluetoothAdapter.cancelDiscovery();
-	}
-
-	@SuppressLint("NewApi")
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		mBleDeviceListAdapter.clear();
-		mBluetoothAdapter.startLeScan(mLeScanCallback);
+		timer.cancel();
 	}
 
 	@Override
@@ -159,7 +153,6 @@ public class MainActivity extends Activity {
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
 		switch (item.getItemId()) {
 		case R.id.menu_stop:
 			mBluetoothAdapter.stopLeScan(mLeScanCallback);

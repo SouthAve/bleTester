@@ -90,14 +90,17 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		} else {
 			viewholder = (ViewHolder) view.getTag();
 		}
-		viewholder.devicename.setText(mLeDevices.get(position).getName());
+		String name = mLeDevices.get(position).getName();
+		if (name != null)
+			viewholder.devicename.setText(name);
+		else
+			viewholder.devicename.setText("Unknow Device");
 		viewholder.deviceAddress.setText("地址： "
 				+ mLeDevices.get(position).getAddress());
 		viewholder.deviceRSSI.setText("信号： " + RSSIs.get(position).toString());
 		viewholder.devicerecord.setText("广播包： " + "\n"
 				+ scanRecords.get(position));
 		return view;
-
 	}
 
 	static class ViewHolder {

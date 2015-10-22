@@ -1,6 +1,7 @@
 package com.xinzhongxin.adapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.xinzhongxinbletester.R;
@@ -20,6 +21,7 @@ public class BleSevicesListAdapter extends BaseAdapter {
 			.getSimpleName();
 	private LayoutInflater mInflater;// 得到一个LayoutInfalter对象用来导入布局
 	private ArrayList<BluetoothGattService> services;
+	private ArrayList<HashMap<String, String>> serviceName;
 
 	public BleSevicesListAdapter(Context context) {
 		services = new ArrayList<BluetoothGattService>();
@@ -50,6 +52,10 @@ public class BleSevicesListAdapter extends BaseAdapter {
 		this.services = (ArrayList<BluetoothGattService>) services;
 	}
 
+	public void addServiceNames(List<HashMap<String, String>> serviceName) {
+		this.serviceName = (ArrayList<HashMap<String, String>>) serviceName;
+	}
+
 	@SuppressLint("NewApi")
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
@@ -71,7 +77,8 @@ public class BleSevicesListAdapter extends BaseAdapter {
 		} else {
 			viewholder = (ViewHolder) view.getTag();
 		}
-		// viewholder.servicesname.setText(services.get(position).toString());
+		viewholder.servicesname.setText(serviceName.get(position).get("Name")
+				);
 		viewholder.servicesUUID.setText(services.get(position).getUuid()
 				.toString());
 		viewholder.servicesInID.setText("Instance Id: "
@@ -82,7 +89,6 @@ public class BleSevicesListAdapter extends BaseAdapter {
 			viewholder.servicestype.setText("Type : secondary");
 		}
 		return view;
-
 	}
 
 	static class ViewHolder {

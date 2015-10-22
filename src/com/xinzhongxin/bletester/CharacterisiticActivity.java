@@ -1,10 +1,14 @@
 package com.xinzhongxin.bletester;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -24,6 +28,7 @@ import android.widget.ListView;
 
 import com.xinzhongxin.adapter.CharacterisiticListAdapter;
 import com.xinzhongxin.service.BleService;
+import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 public class CharacterisiticActivity extends Activity {
@@ -44,12 +49,25 @@ public class CharacterisiticActivity extends Activity {
 			bleService = ((BleService.LocalBinder) service).getService();
 			gattService = bleService.mBluetoothGatt.getService(uuid);
 			bleService.mBluetoothGatt.readRemoteRssi();
+			final ArrayList<HashMap<String, String>> charNames = new ArrayList<HashMap<String, String>>();
+			final List<BluetoothGattCharacteristic> gattchars = gattService
+					.getCharacteristics();
+			for (BluetoothGattCharacteristic c : gattchars) {
+				HashMap<String, String> currentCharData = new HashMap<String, String>();
+				String uuidStr = c.getUuid().toString().toUpperCase();
+				currentCharData
+						.put("Name",
+								Utils.BLE_CHARACTERISTICS.containsValue(uuid) ? Utils.BLE_CHARACTERISTICS
+										.get(uuidStr)
+										: "UnknownCharacteristics");
+				charNames.add(currentCharData);
+			}
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-
-					charListAdapter.addChars(gattService.getCharacteristics());
+					charListAdapter.addCharNames(charNames);
+					charListAdapter.addChars(gattchars);
 					charListAdapter.notifyDataSetChanged();
 				}
 			});
@@ -63,7 +81,8 @@ public class CharacterisiticActivity extends Activity {
 	};
 	BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
-		@SuppressLint("NewApi") @Override
+		@SuppressLint("NewApi")
+		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			// TODO Auto-generated method stub
 			String action = intent.getAction();
@@ -71,7 +90,11 @@ public class CharacterisiticActivity extends Activity {
 				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
 				CharacterisiticActivity.this.invalidateOptionsMenu();
 			}
-
+			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
+				Toast.makeText(CharacterisiticActivity.this, "设备连接断开",
+						Toast.LENGTH_SHORT).show();
+				bleService.connect(DeviceConnect.bleAddress);
+			}
 		}
 	};
 
@@ -112,7 +135,6 @@ public class CharacterisiticActivity extends Activity {
 				// TODO Auto-generated method stub
 				Intent mIntent = new Intent(CharacterisiticActivity.this,
 						ChangeCharActivity.class);
-
 				UUID charUuid = bleService.mBluetoothGatt.getService(uuid)
 						.getCharacteristics().get(position).getUuid();
 				mIntent.putExtra("charUUID", charUuid);
