@@ -279,7 +279,6 @@ public class BleService extends Service {
 			mBluetoothAdapter.cancelDiscovery();
 			mBluetoothAdapter = null;
 		}
-		gatt = null;
 	}
 
 	@Override
@@ -293,7 +292,6 @@ public class BleService extends Service {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		this.close(mBluetoothGatt);
-
 	}
 
 }

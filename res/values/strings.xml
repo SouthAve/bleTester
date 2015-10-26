@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">芯中芯BLE测试</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,5 +8,7 @@
     <string name="menu_scan">扫描</string>
     <string name="menu_stop">停止</string>
     <string name="menu_services">刷新服务</string>
+    <string name="menu_autoconnect">自动连接</string>
     <string name="RSSI">RSSI</string>
+
 </resources>

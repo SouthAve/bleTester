@@ -18,7 +18,7 @@
             android:text="字符串" />
 
         <RadioButton
-                       android:id="@+id/rb_write_hex"
+            android:id="@+id/rb_write_hex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="十六进制" />
@@ -29,6 +29,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="写入值" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_timing_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="定时发送" />
+
+        <EditText
+            android:id="@+id/ed_writetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="0123456789"
+            android:hint="发送时间/ms"
+            android:inputType="number"
+            android:text="100" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(单位ms)"
+            android:textSize="10dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,7 +104,6 @@
             android:id="@+id/ed_edit_btn3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-           
             android:hint="编辑按键3的值" />
     </LinearLayout>
 

@@ -28,7 +28,9 @@
         </activity>
         <activity android:name="com.xinzhongxin.bletester.DeviceConnect" >
         </activity>
-        <activity android:name="com.xinzhongxin.bletester.CharacterisiticActivity" >
+        <activity
+            android:name="com.xinzhongxin.bletester.CharacterisiticActivity"
+            android:launchMode="standard" >
         </activity>
         <activity android:name="com.xinzhongxin.bletester.ChangeCharActivity" >
         </activity>

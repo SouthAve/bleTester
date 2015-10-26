@@ -11,6 +11,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,14 +21,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.xinzhongxin.adapter.BleDeviceListAdapter;
-import com.xinzhongxin.customview.MyListView;
 import com.xinzhongxinbletester.R;
 
 public class MainActivity extends Activity {
-	MyListView listView;
+	ListView listView;
 	SwipeRefreshLayout swagLayout;
 	BluetoothAdapter mBluetoothAdapter;
 	private LeScanCallback mLeScanCallback;
@@ -35,6 +38,8 @@ public class MainActivity extends Activity {
 
 	Handler handler;
 
+	SharedPreferences sharedPreferences;
+	Editor editor;
 	Timer timer = new Timer();
 
 	@SuppressLint("NewApi")
@@ -43,15 +48,16 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getActionBar().setTitle(R.string.app_title);
+		sharedPreferences = getPreferences(0);
+		editor = sharedPreferences.edit();
 		init();
 		getBleAdapter();
 		getScanResualt();
-		mBluetoothAdapter.startLeScan(mLeScanCallback);
 	}
 
 	private void init() {
 		// TODO Auto-generated method stub
-		listView = (MyListView) findViewById(R.id.lv_deviceList);
+		listView = (ListView) findViewById(R.id.lv_deviceList);
 		listView.setEmptyView(findViewById(R.id.pb_empty));
 		swagLayout = (SwipeRefreshLayout) findViewById(R.id.swagLayout);
 		swagLayout.setVisibility(View.VISIBLE);
@@ -133,6 +139,15 @@ public class MainActivity extends Activity {
 
 	@SuppressLint("NewApi")
 	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		mBleDeviceListAdapter.clear();
+		mBluetoothAdapter.startLeScan(mLeScanCallback);
+	}
+
+	@SuppressLint("NewApi")
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -158,7 +173,20 @@ public class MainActivity extends Activity {
 			mBluetoothAdapter.stopLeScan(mLeScanCallback);
 			scanning = false;
 			break;
+
+		case R.id.menu_autoconnect:
+			if (sharedPreferences.getBoolean("AutoConnect", true)) {
+				editor.putBoolean("AutoConnect", false);
+				editor.commit();
+				Toast.makeText(this, "取消自动连接", Toast.LENGTH_SHORT).show();
+			} else {
+				editor.putBoolean("AutoConnect", true);
+				editor.commit();
+				Toast.makeText(this, "已设置为断开后自动连接", Toast.LENGTH_SHORT).show();
+			}
+			break;
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
 

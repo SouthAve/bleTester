@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -44,7 +46,10 @@ public class DeviceConnect extends Activity {
 	ListView serviceList;
 	SwipeRefreshLayout swagLayout;
 	BleSevicesListAdapter servicesListAdapter;
+
 	Intent intent;
+	SharedPreferences sharedPreferences;
+	Editor editor;
 	public static String bleAddress;
 	boolean isConnecting = false;
 	boolean isAlarm = false;
@@ -92,7 +97,10 @@ public class DeviceConnect extends Activity {
 				Toast.makeText(DeviceConnect.this, "设备断开！", Toast.LENGTH_LONG)
 						.show();
 				// 断开后重连
-				bleService.connect(bleAddress);
+				if (sharedPreferences.getBoolean("AutoConnect", true)) {
+					bleService.connect(bleAddress);
+				}
+
 			}
 			if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				String uuid = null;
@@ -130,6 +138,8 @@ public class DeviceConnect extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getActionBar().setTitle("服务列表");
+		sharedPreferences = getPreferences(0);
+		editor = sharedPreferences.edit();
 		init();
 		bindBleSevice();
 		registerReceiver(mbtBroadcastReceiver, makeGattUpdateIntentFilter());

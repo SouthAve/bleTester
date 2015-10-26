@@ -9,11 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <com.xinzhongxin.customview.MyListView
+        <ListView
             android:id="@+id/lv_deviceList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-        </com.xinzhongxin.customview.MyListView>
+        </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar

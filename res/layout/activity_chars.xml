@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     tools:context="com.xinzhongxin.bletester.MainActivity" >
 
-    <com.xinzhongxin.customview.MyListView
+    <ListView
         android:id="@+id/lv_charList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </com.xinzhongxin.customview.MyListView>
+    </ListView>
 
     <ProgressBar
         android:id="@+id/pb_empty2"

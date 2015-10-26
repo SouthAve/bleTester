@@ -17,6 +17,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +27,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -55,6 +57,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	RadioGroup radioGroup;
 	RadioButton format_hex;
 	RadioButton format_string;
+	Button timing_write;
+	Boolean writing = false;
+	EditText write_time;
 	UUID charUuid;
 	UUID serUuid;
 	BleService bleService;
@@ -184,7 +189,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
 				Toast.makeText(ChangeCharActivity.this, "设备连接断开",
 						Toast.LENGTH_SHORT).show();
-				bleService.connect(DeviceConnect.bleAddress);
+				// 断开后重连
+				if (sharedPreferences.getBoolean("AutoConnect", true)) {
+					bleService.connect(DeviceConnect.bleAddress);
+				}
+
 			}
 		}
 	};
@@ -316,6 +325,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				.findViewById(R.id.rg_write_format);
 		final EditText editText = (EditText) dialogview
 				.findViewById(R.id.char_value);
+		final Button timing_write = (Button) dialogview
+				.findViewById(R.id.btn_timing_write);
+		write_time = (EditText) dialogview.findViewById(R.id.ed_writetime);
 		final Button btn_0 = (Button) dialogview.findViewById(R.id.btn_00);
 		final Button btn_1 = (Button) dialogview.findViewById(R.id.btn_01);
 		final Button btn_2 = (Button) dialogview.findViewById(R.id.btn_02);
@@ -364,14 +376,12 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1,
 					int arg2, int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -504,9 +514,48 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				}
 			}
 		});
+		timing_write.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				final String charvalue = editText.getText().toString();
+				final long period = Integer.parseInt(write_time.getText()
+						.toString());
+				if (writing) {
+					timing_write.setText("定时发送");
+					writing = false;
+				} else {
+					timing_write.setText("停止发送");
+					writing = true;
+				}
+				new Thread(new Runnable() {
+					@SuppressLint("NewApi")
+					@Override
+					public void run() {
+						try {
+							while (writing) {
+								if (!charvalue.isEmpty()) {
+									if (isHex) {
+										byte[] str = str2Byte(charvalue);
+										gattChar.setValue(str);
+									} else {
+										gattChar.setValue(charvalue);
+									}
+									bleService.mBluetoothGatt
+											.writeCharacteristic(gattChar);
+								}
+								Thread.sleep(period);
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					}
+				}).start();
 
+			}
+		});
 		dialog.setView(dialogview);
-		dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton("发送", new DialogInterface.OnClickListener() {
 			@SuppressLint("NewApi")
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
