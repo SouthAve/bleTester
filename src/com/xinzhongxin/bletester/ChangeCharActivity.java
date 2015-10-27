@@ -73,6 +73,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	int resultLengthNum;
 	int prop;
 	int rssi;
+	long period;
+	int write_byte_number;
 	boolean startNotify;
 	boolean isNotifyHex;
 	boolean isHex;
@@ -331,6 +333,8 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		final Button btn_0 = (Button) dialogview.findViewById(R.id.btn_00);
 		final Button btn_1 = (Button) dialogview.findViewById(R.id.btn_01);
 		final Button btn_2 = (Button) dialogview.findViewById(R.id.btn_02);
+		final TextView timing_write_count = (TextView) dialogview
+				.findViewById(R.id.tv_timing_write_count);
 		final RadioButton radio1 = (RadioButton) dialogview
 				.findViewById(R.id.rb_write_string);
 		final RadioButton radio2 = (RadioButton) dialogview
@@ -519,39 +523,50 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				final String charvalue = editText.getText().toString();
-				final long period = Integer.parseInt(write_time.getText()
-						.toString());
+				period = Integer.parseInt(write_time.getText().toString());
 				if (writing) {
 					timing_write.setText("定时发送");
 					writing = false;
 				} else {
 					timing_write.setText("停止发送");
+					write_byte_number = 0;
 					writing = true;
 				}
 				new Thread(new Runnable() {
 					@SuppressLint("NewApi")
-					@Override
 					public void run() {
 						try {
 							while (writing) {
 								if (!charvalue.isEmpty()) {
 									if (isHex) {
+										write_byte_number += charvalue.length() / 2;
 										byte[] str = str2Byte(charvalue);
 										gattChar.setValue(str);
 									} else {
+										write_byte_number += charvalue.length();
 										gattChar.setValue(charvalue);
 									}
 									bleService.mBluetoothGatt
 											.writeCharacteristic(gattChar);
+									Thread.sleep(period);
+									runOnUiThread(new Runnable() {
+										@SuppressLint("NewApi")
+										@Override
+										public void run() {
+											// TODO Auto-generated method stub
+											timing_write_count.setText("共:"
+													+ write_byte_number);
+										}
+									});
 								}
-								Thread.sleep(period);
 							}
+
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
 					}
 				}).start();
-
+				;
 			}
 		});
 		dialog.setView(dialogview);
@@ -569,6 +584,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						gattChar.setValue(charvalue);
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
+
 				}
 			}
 		});

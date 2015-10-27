@@ -53,8 +53,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(单位ms)"
+            android:text="ms "
             android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/tv_timing_write_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="共:0"
+            android:textSize="14dp" />
     </LinearLayout>
 
     <LinearLayout
