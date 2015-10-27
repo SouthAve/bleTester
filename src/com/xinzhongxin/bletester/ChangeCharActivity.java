@@ -522,7 +522,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				final String charvalue = editText.getText().toString();
 				period = Integer.parseInt(write_time.getText().toString());
 				if (writing) {
 					timing_write.setText("¶¨Ê±·¢ËÍ");
@@ -537,13 +536,16 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					public void run() {
 						try {
 							while (writing) {
+								String charvalue = editText.getText()
+										.toString();
 								if (!charvalue.isEmpty()) {
 									if (isHex) {
-										write_byte_number += charvalue.length() / 2;
+										write_byte_number += charvalue.length()
+												/ 2 + charvalue.length() % 2;
 										byte[] str = str2Byte(charvalue);
 										gattChar.setValue(str);
 									} else {
-										write_byte_number += charvalue.length();
+										write_byte_number += charvalue.length()+ charvalue.length() % 2;
 										gattChar.setValue(charvalue);
 									}
 									bleService.mBluetoothGatt
@@ -560,7 +562,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 									});
 								}
 							}
-
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
