@@ -400,6 +400,26 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				editor.commit();
 			}
 		});
+		editText.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				checkInputkey(s);
+			}
+		});
 		editbtn2.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
@@ -540,12 +560,14 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 										.toString();
 								if (!charvalue.isEmpty()) {
 									if (isHex) {
+
 										write_byte_number += charvalue.length()
 												/ 2 + charvalue.length() % 2;
 										byte[] str = str2Byte(charvalue);
 										gattChar.setValue(str);
 									} else {
-										write_byte_number += charvalue.length()+ charvalue.length() % 2;
+										write_byte_number += charvalue.length()
+												+ charvalue.length() % 2;
 										gattChar.setValue(charvalue);
 									}
 									bleService.mBluetoothGatt
@@ -585,7 +607,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						gattChar.setValue(charvalue);
 					}
 					bleService.mBluetoothGatt.writeCharacteristic(gattChar);
-
 				}
 			}
 		});
