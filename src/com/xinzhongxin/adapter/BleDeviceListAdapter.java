@@ -26,7 +26,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		mLeDevices = new ArrayList<BluetoothDevice>();
 		RSSIs = new ArrayList<Integer>();
 		scanRecords = new ArrayList<String>();
-		this.mInflater = LayoutInflater.from(context);   //获得inflater实例
+		this.mInflater = LayoutInflater.from(context); // 获得inflater实例
 	}
 
 	public void addDevice(BluetoothDevice device, int RSSI, String scanRecord) {
@@ -40,13 +40,10 @@ public class BleDeviceListAdapter extends BaseAdapter {
 				BluetoothDevice d = mLeDevices.get(i);
 				if (device.getAddress().equals(d.getAddress())) {
 					RSSIs.set(i, RSSI);
-					Log.v("contains",
-							device.getName() + " RSSI: " + RSSIs.get(i));
+					scanRecords.set(i, scanRecord);
 				}
 			}
-
 		}
-
 	}
 
 	public BluetoothDevice getDevice(int position) {

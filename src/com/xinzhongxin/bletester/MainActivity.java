@@ -114,11 +114,6 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				// πÿ±’…®√Ë
-
-				mBluetoothAdapter.stopLeScan(mLeScanCallback);
-				scanning = false;
-
 				BluetoothDevice device = mBleDeviceListAdapter
 						.getDevice(position);
 				final Intent intent = new Intent(MainActivity.this,
@@ -129,7 +124,7 @@ public class MainActivity extends Activity {
 						device.getAddress());
 
 				startActivity(intent);
-
+				onDestroy();
 			}
 		});
 	}
@@ -140,6 +135,9 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		mBluetoothAdapter.stopLeScan(mLeScanCallback);
+		mBleDeviceListAdapter.clear();
+		scanning = false;
+		mBluetoothAdapter.cancelDiscovery();
 	}
 
 	@SuppressLint("NewApi")
@@ -166,9 +164,6 @@ public class MainActivity extends Activity {
 		case R.id.menu_stop:
 			mBluetoothAdapter.stopLeScan(mLeScanCallback);
 			scanning = false;
-			break;
-		case R.id.menu_scan:
-
 			break;
 		}
 		return super.onOptionsItemSelected(item);

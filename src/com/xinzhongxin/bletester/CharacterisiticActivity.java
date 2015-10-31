@@ -6,14 +6,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -28,21 +33,22 @@ public class CharacterisiticActivity extends Activity {
 	CharacterisiticListAdapter charListAdapter;
 	UUID uuid;
 	// BLE Sevice
-	BleService bleSevice;
+	BleService bleService;
 	BluetoothGattService gattService;
-
+	int rssi;
 	private final ServiceConnection conn = new ServiceConnection() {
 		@SuppressLint("NewApi")
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder service) {
 			// TODO Auto-generated method stub
-			bleSevice = ((BleService.LocalBinder) service).getService();
-			gattService = bleSevice.mBluetoothGatt.getService(uuid);
-
+			bleService = ((BleService.LocalBinder) service).getService();
+			gattService = bleService.mBluetoothGatt.getService(uuid);
+			bleService.mBluetoothGatt.readRemoteRssi();
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
+
 					charListAdapter.addChars(gattService.getCharacteristics());
 					charListAdapter.notifyDataSetChanged();
 				}
@@ -52,9 +58,33 @@ public class CharacterisiticActivity extends Activity {
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			// TODO Auto-generated method stub
-			bleSevice = null;
+			bleService = null;
 		}
 	};
+	BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+		@SuppressLint("NewApi") @Override
+		public void onReceive(Context arg0, Intent intent) {
+			// TODO Auto-generated method stub
+			String action = intent.getAction();
+			if (BleService.ACTION_GATT_RSSI.equals(action)) {
+				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
+				CharacterisiticActivity.this.invalidateOptionsMenu();
+			}
+
+		}
+	};
+
+	private static IntentFilter makeGattUpdateIntentFilter() {
+		final IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BleService.ACTION_GATT_CONNECTED);
+		intentFilter.addAction(BleService.ACTION_GATT_DISCONNECTED);
+		intentFilter.addAction(BleService.ACTION_GATT_SERVICES_DISCOVERED);
+		intentFilter.addAction(BleService.ACTION_DATA_AVAILABLE);
+		intentFilter.addAction(BleService.BATTERY_LEVEL_AVAILABLE);
+		intentFilter.addAction(BleService.ACTION_GATT_RSSI);
+		return intentFilter;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +94,7 @@ public class CharacterisiticActivity extends Activity {
 		uuid = (UUID) getIntent().getExtras().get("serviceUUID");
 		init();
 		bindService(new Intent(this, BleService.class), conn, BIND_AUTO_CREATE);
+		registerReceiver(mBroadcastReceiver, makeGattUpdateIntentFilter());
 	}
 
 	@SuppressLint("NewApi")
@@ -82,10 +113,10 @@ public class CharacterisiticActivity extends Activity {
 				Intent mIntent = new Intent(CharacterisiticActivity.this,
 						ChangeCharActivity.class);
 
-				UUID charUuid = bleSevice.mBluetoothGatt.getService(uuid)
+				UUID charUuid = bleService.mBluetoothGatt.getService(uuid)
 						.getCharacteristics().get(position).getUuid();
 				mIntent.putExtra("charUUID", charUuid);
-				mIntent.putExtra("properties", bleSevice.mBluetoothGatt
+				mIntent.putExtra("properties", bleService.mBluetoothGatt
 						.getService(uuid).getCharacteristics().get(position)
 						.getProperties());
 				mIntent.putExtra("serUUID", uuid);
@@ -96,9 +127,19 @@ public class CharacterisiticActivity extends Activity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.services, menu);
+		menu.getItem(1).setVisible(false);
+		menu.getItem(0).setTitle(rssi + "");
+		return true;
+	}
+
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		unbindService(conn);
+		unregisterReceiver(mBroadcastReceiver);
 	}
 }

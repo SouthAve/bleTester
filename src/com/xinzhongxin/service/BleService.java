@@ -104,7 +104,6 @@ public class BleService extends Service {
 		public void onCharacteristicRead(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic, int status) {
 			if (status == BluetoothGatt.GATT_SUCCESS) {
-				Log.v(TAG, "Read!!!!!!!!!");
 				getChartacteristicValue(characteristic);
 			} else {
 				Log.v(TAG, " BluetoothGatt Read Failed!");
@@ -115,7 +114,6 @@ public class BleService extends Service {
 		@Override
 		public void onCharacteristicChanged(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic) {
-			Log.v(TAG, "Changed!!!!!!!!!");
 			broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
 		}
 
@@ -127,20 +125,22 @@ public class BleService extends Service {
 			rssiIntent.putExtra(EXTRA_DATA_RSSI, rssi);
 			rssiIntent.setAction(ACTION_GATT_RSSI);
 			sendBroadcast(rssiIntent);
-			new Thread(new Runnable() {
+			if (mBluetoothGatt != null) {
+				new Thread(new Runnable() {
 
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							Thread.sleep(1500);
+							mBluetoothGatt.readRemoteRssi();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					mBluetoothGatt.readRemoteRssi();
-				}
-			}).start();
+				}).start();
+			}
 
 		}
 
@@ -156,7 +156,6 @@ public class BleService extends Service {
 			mIntent.putExtra("desriptor1", des.get(0).getUuid().toString());
 			mIntent.putExtra("desriptor2", des.get(1).getUuid().toString());
 		}
-
 		mIntent.putExtra("StringValue", characteristic.getStringValue(0));
 		String hexValue = MainActivity.bytesToHex(characteristic.getValue());
 		mIntent.putExtra("HexValue", hexValue.toString());
@@ -280,12 +279,12 @@ public class BleService extends Service {
 			mBluetoothAdapter.cancelDiscovery();
 			mBluetoothAdapter = null;
 		}
+		gatt = null;
 	}
 
 	@Override
 	public boolean onUnbind(Intent intent) {
 		// TODO Auto-generated method stub
-		this.close(mBluetoothGatt);
 		return super.onUnbind(intent);
 	}
 
@@ -293,6 +292,8 @@ public class BleService extends Service {
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		this.close(mBluetoothGatt);
+
 	}
 
 }

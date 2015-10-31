@@ -22,6 +22,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.NumberKeyListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -66,6 +67,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	String resultLength = null;
 	int resultLengthNum;
 	int prop;
+	int rssi;
 	boolean startNotify;
 	boolean isNotifyHex;
 	boolean isHex;
@@ -116,18 +118,38 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 
 	BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
+		@SuppressLint("NewApi")
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			// TODO Auto-generated method stub
 			String action = intent.getAction();
-			final String des1String = intent.getExtras()
-					.getString("desriptor1");
-			final String des2String = intent.getExtras()
-					.getString("desriptor2");
-			final String stringValue = intent.getExtras().getString(
-					"StringValue");
-			final String hexValue = intent.getExtras().getString("HexValue");
-			final String readTime = intent.getExtras().getString("time");
+			if (BleService.ACTION_GATT_RSSI.equals(action)) {
+				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
+				ChangeCharActivity.this.invalidateOptionsMenu();
+			}
+			if (BleService.ACTION_CHAR_READED.equals(action)) {
+				final String des1String = intent.getExtras().getString(
+						"desriptor1");
+				final String des2String = intent.getExtras().getString(
+						"desriptor2");
+				final String stringValue = intent.getExtras().getString(
+						"StringValue");
+				final String hexValue = intent.getExtras()
+						.getString("HexValue");
+				final String readTime = intent.getExtras().getString("time");
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						charString.setText("字符串: " + stringValue);
+						charHex.setText("十六进制: " + hexValue);
+						time.setText("读取时间: " + readTime);
+						descriptor1.setText(des1String);
+						descriptor2.setText(des2String);
+					}
+				});
+			}
 
 			if (BleService.ACTION_DATA_AVAILABLE.equals(action)) {
 				if (isNotifyHex) {
@@ -158,30 +180,22 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						resultcount.setText("字节数： " + resultLength);
 					}
 				});
-
 			}
 
-			runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					charString.setText("字符串: " + stringValue);
-					charHex.setText("十六进制: " + hexValue);
-					time.setText("读取时间: " + readTime);
-					descriptor1.setText(des1String);
-					descriptor2.setText(des2String);
-				}
-			});
 		}
 	};
 
 	private IntentFilter makeIntentFilter() {
 		// TODO Auto-generated method stub
-		IntentFilter mFilter = new IntentFilter();
-		mFilter.addAction(BleService.ACTION_CHAR_READED);
-		mFilter.addAction(BleService.ACTION_DATA_AVAILABLE);
-		return mFilter;
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BleService.ACTION_CHAR_READED);
+		intentFilter.addAction(BleService.ACTION_GATT_CONNECTED);
+		intentFilter.addAction(BleService.ACTION_GATT_DISCONNECTED);
+		intentFilter.addAction(BleService.ACTION_GATT_SERVICES_DISCOVERED);
+		intentFilter.addAction(BleService.ACTION_DATA_AVAILABLE);
+		intentFilter.addAction(BleService.BATTERY_LEVEL_AVAILABLE);
+		intentFilter.addAction(BleService.ACTION_GATT_RSSI);
+		return intentFilter;
 	}
 
 	@Override
@@ -595,6 +609,15 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			System.out.println(bytes[i]);
 		}
 		return bytes;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.services, menu);
+		menu.getItem(1).setVisible(false);
+		menu.getItem(0).setTitle(rssi + "");
+		return true;
 	}
 
 }

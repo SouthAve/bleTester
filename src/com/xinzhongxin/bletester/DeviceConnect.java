@@ -78,7 +78,6 @@ public class DeviceConnect extends Activity {
 			// TODO Auto-generated method stub
 			String action = intent.getAction();
 			if (BleService.ACTION_GATT_CONNECTED.equals(action)) {
-				bleService.mBluetoothGatt.readRemoteRssi();
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -90,8 +89,11 @@ public class DeviceConnect extends Activity {
 			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
 				Toast.makeText(DeviceConnect.this, "设备断开！", Toast.LENGTH_LONG)
 						.show();
+				// 断开后重连
+				bleService.connect(bleAddress);
 			}
 			if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+				bleService.mBluetoothGatt.readRemoteRssi();
 				runOnUiThread(new Runnable() {
 					@SuppressLint("NewApi")
 					public void run() {
@@ -101,8 +103,7 @@ public class DeviceConnect extends Activity {
 						servicesListAdapter.notifyDataSetChanged();
 					}
 				});
-				// 断开后重连
-				bleService.connect(bleAddress);
+
 			}
 			if (BleService.ACTION_GATT_RSSI.equals(action)) {
 				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
@@ -207,6 +208,7 @@ public class DeviceConnect extends Activity {
 		// TODO Auto-generated method stub
 		getMenuInflater().inflate(R.menu.services, menu);
 		menu.getItem(1).setTitle(rssi + "");
+		menu.getItem(0).setVisible(false);
 		return true;
 	}
 
@@ -214,12 +216,6 @@ public class DeviceConnect extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		if (item.getItemId() == R.id.menu_services) {
-			// TODO Auto-generated method stub
-			servicesListAdapter.clear();
-			bleService.mBluetoothGatt.discoverServices();
-			servicesListAdapter.notifyDataSetChanged();
-		}
 		if (item.getItemId() == R.id.menu_rssi)
 			item.setTitle(rssi + "");
 		return super.onOptionsItemSelected(item);
