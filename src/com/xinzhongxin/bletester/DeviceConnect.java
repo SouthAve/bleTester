@@ -49,7 +49,7 @@ public class DeviceConnect extends Activity {
 	List<BluetoothGattService> gattServices = new ArrayList<BluetoothGattService>();
 	// BLE Sevice
 	BleService bleService;
-
+	int rssi;
 	private final ServiceConnection conn = new ServiceConnection() {
 		@SuppressLint("NewApi")
 		@Override
@@ -60,7 +60,6 @@ public class DeviceConnect extends Activity {
 				finish();
 			}
 			bleService.connect(bleAddress);
-
 		}
 
 		@Override
@@ -73,11 +72,13 @@ public class DeviceConnect extends Activity {
 	// 用于接收bleService的广播
 	BroadcastReceiver mbtBroadcastReceiver = new BroadcastReceiver() {
 
+		@SuppressLint("NewApi")
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
 			String action = intent.getAction();
 			if (BleService.ACTION_GATT_CONNECTED.equals(action)) {
+				bleService.mBluetoothGatt.readRemoteRssi();
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -103,6 +104,11 @@ public class DeviceConnect extends Activity {
 				// 断开后重连
 				bleService.connect(bleAddress);
 			}
+			if (BleService.ACTION_GATT_RSSI.equals(action)) {
+				rssi = intent.getExtras().getInt(BleService.EXTRA_DATA_RSSI);
+				DeviceConnect.this.invalidateOptionsMenu();
+			}
+
 		}
 	};
 
@@ -165,14 +171,11 @@ public class DeviceConnect extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view,
 					int position, long id) {
-
 				Intent servicesIntent = new Intent(DeviceConnect.this,
 						CharacterisiticActivity.class);
-
 				servicesIntent.putExtra("serviceUUID",
 						bleService.mBluetoothGatt.getServices().get(position)
 								.getUuid());
-
 				startActivity(servicesIntent);
 			}
 		});
@@ -194,13 +197,16 @@ public class DeviceConnect extends Activity {
 		intentFilter.addAction(BleService.ACTION_GATT_SERVICES_DISCOVERED);
 		intentFilter.addAction(BleService.ACTION_DATA_AVAILABLE);
 		intentFilter.addAction(BleService.BATTERY_LEVEL_AVAILABLE);
+		intentFilter.addAction(BleService.ACTION_GATT_RSSI);
 		return intentFilter;
 	}
 
+	@SuppressLint("NewApi")
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		// TODO Auto-generated method stub
 		getMenuInflater().inflate(R.menu.services, menu);
+		menu.getItem(1).setTitle(rssi + "");
 		return true;
 	}
 
@@ -213,8 +219,10 @@ public class DeviceConnect extends Activity {
 			servicesListAdapter.clear();
 			bleService.mBluetoothGatt.discoverServices();
 			servicesListAdapter.notifyDataSetChanged();
-
 		}
+		if (item.getItemId() == R.id.menu_rssi)
+			item.setTitle(rssi + "");
 		return super.onOptionsItemSelected(item);
 	}
+
 }

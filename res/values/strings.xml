@@ -8,5 +8,6 @@
     <string name="menu_scan">扫描</string>
     <string name="menu_stop">停止</string>
     <string name="menu_services">刷新服务</string>
+    <string name="RSSI">RSSI</string>
 
 </resources>

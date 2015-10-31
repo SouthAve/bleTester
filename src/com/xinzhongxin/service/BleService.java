@@ -32,7 +32,7 @@ public class BleService extends Service {
 	public BluetoothGatt mBluetoothGatt;
 
 	private String mbluetoothDeviceAddress;
-	private int mConnectionState = STATE_DISCONNECTED;
+	public int mConnectionState = STATE_DISCONNECTED;
 
 	private static final int STATE_DISCONNECTED = 0;
 	private static final int STATE_CONNECTING = 1;
@@ -48,7 +48,8 @@ public class BleService extends Service {
 	public final static String EXTRA_DATA = "com.example.bluetooth.le.EXTRA_DATA";
 	public final static String EXTRA_STRING_DATA = "com.example.bluetooth.le.EXTRA_STRING_DATA";
 	public final static String EXTRA_DATA_LENGTH = "com.example.bluetooth.le.EXTRA_DATA_LENGTH";
-
+	public final static String ACTION_GATT_RSSI = "com.example.bluetooth.le.ACTION_GATT_RSSI";
+	public final static String EXTRA_DATA_RSSI = "com.example.bluetooth.le.ACTION_GATT_RSSI";
 	// 集中常用的
 	public static final UUID RX_ALART_UUID = UUID
 			.fromString("00001802-0000-1000-8000-00805f9b34fb");
@@ -116,6 +117,31 @@ public class BleService extends Service {
 				BluetoothGattCharacteristic characteristic) {
 			Log.v(TAG, "Changed!!!!!!!!!");
 			broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+		}
+
+		@Override
+		public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+			// TODO Auto-generated method stub
+			super.onReadRemoteRssi(gatt, rssi, status);
+			Intent rssiIntent = new Intent();
+			rssiIntent.putExtra(EXTRA_DATA_RSSI, rssi);
+			rssiIntent.setAction(ACTION_GATT_RSSI);
+			sendBroadcast(rssiIntent);
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					mBluetoothGatt.readRemoteRssi();
+				}
+			}).start();
+
 		}
 
 	};

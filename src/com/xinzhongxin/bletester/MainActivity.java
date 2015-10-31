@@ -87,9 +87,9 @@ public class MainActivity extends Activity {
 						mBleDeviceListAdapter.addDevice(device, rssi,
 								bytesToHex(scanRecord));
 						mBleDeviceListAdapter.notifyDataSetChanged();
+						invalidateOptionsMenu();
 					}
 				});
-
 			}
 		};
 
@@ -114,7 +114,10 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				// ¹Ø±ÕÉ¨Ãè
+
 				mBluetoothAdapter.stopLeScan(mLeScanCallback);
+				scanning = false;
 
 				BluetoothDevice device = mBleDeviceListAdapter
 						.getDevice(position);
@@ -151,6 +154,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		menu.getItem(0).setTitle("¹²" + mBleDeviceListAdapter.getCount() + "¸ö");
 		return true;
 	}
 
@@ -164,13 +168,9 @@ public class MainActivity extends Activity {
 			scanning = false;
 			break;
 		case R.id.menu_scan:
-			mBleDeviceListAdapter.clear();
-			mBluetoothAdapter.startLeScan(mLeScanCallback);
-			scanning = true;
+
 			break;
-
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
