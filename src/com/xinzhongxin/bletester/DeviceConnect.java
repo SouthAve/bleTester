@@ -33,7 +33,6 @@ import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 public class DeviceConnect extends Activity {
-	private final static String TAG = "DeviceConnect";
 
 	public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
 	public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
@@ -79,7 +78,7 @@ public class DeviceConnect extends Activity {
 	// 用于接收bleService的广播
 	BroadcastReceiver mbtBroadcastReceiver = new BroadcastReceiver() {
 
-		@SuppressLint("NewApi")
+		@SuppressLint({ "NewApi", "DefaultLocale" })
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
@@ -148,20 +147,6 @@ public class DeviceConnect extends Activity {
 	private void bindBleSevice() {
 		Intent serviceIntent = new Intent(this, BleService.class);
 		bindService(serviceIntent, conn, BIND_AUTO_CREATE);
-	}
-
-	private void connectDevice() {
-		// TODO Auto-generated method stub
-
-		if (!isConnecting) {
-			isConnecting = true;
-			bleService.connect(getIntent().getExtras().getString(
-					DeviceConnect.EXTRAS_DEVICE_ADDRESS));
-		} else {
-			isConnecting = false;
-			sendBroadcast(new Intent(DISCONNECT_DEVICE));
-			bleService.disconnect();
-		}
 	}
 
 	@Override

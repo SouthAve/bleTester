@@ -9,7 +9,6 @@ import com.xinzhongxinbletester.R;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,7 @@ public class BleSevicesListAdapter extends BaseAdapter {
 		this.serviceName = (ArrayList<HashMap<String, String>>) serviceName;
 	}
 
-	@SuppressLint("NewApi")
+	@SuppressLint({ "NewApi", "InflateParams" })
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
 		// TODO Auto-generated method stub
@@ -77,8 +76,7 @@ public class BleSevicesListAdapter extends BaseAdapter {
 		} else {
 			viewholder = (ViewHolder) view.getTag();
 		}
-		viewholder.servicesname.setText(serviceName.get(position).get("Name")
-				);
+		viewholder.servicesname.setText(serviceName.get(position).get("Name"));
 		viewholder.servicesUUID.setText(services.get(position).getUuid()
 				.toString());
 		viewholder.servicesInID.setText("Instance Id: "

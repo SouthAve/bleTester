@@ -17,17 +17,14 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.NumberKeyListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -40,7 +37,6 @@ import com.xinzhongxin.service.BleService;
 import com.xinzhongxinbletester.R;
 
 public class ChangeCharActivity extends Activity implements OnClickListener {
-	private final static String TAG = ChangeCharActivity.class.getSimpleName();
 	TextView descriptor1;
 	TextView descriptor2;
 	TextView charHex;
@@ -319,6 +315,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	/**
 	 * 
 	 */
+	@SuppressLint("InflateParams")
 	public void writeDialog() {
 		AlertDialog.Builder dialog = new Builder(this);
 		View dialogview = LayoutInflater.from(this).inflate(

@@ -1,15 +1,12 @@
 package com.xinzhongxin.adapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import com.xinzhongxinbletester.R;
 
-import android.R.integer;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +30,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 
 		if (!mLeDevices.contains(device)) {
 			this.mLeDevices.add(device);
-			this.RSSIs.add(new Integer(RSSI));
+			this.RSSIs.add(RSSI);
 			this.scanRecords.add(scanRecord);
 		} else {
 			for (int i = 0; i < mLeDevices.size(); i++) {
@@ -69,6 +66,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		return 0;
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
 		// TODO Auto-generated method stub

@@ -1,7 +1,6 @@
 package com.xinzhongxin.bletester;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -34,7 +33,6 @@ public class MainActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	private LeScanCallback mLeScanCallback;
 	BleDeviceListAdapter mBleDeviceListAdapter;
-	private boolean scanning = true;
 
 	Handler handler;
 
@@ -63,13 +61,13 @@ public class MainActivity extends Activity {
 		swagLayout.setVisibility(View.VISIBLE);
 		swagLayout.setOnRefreshListener(new OnRefreshListener() {
 
+			@SuppressWarnings("deprecation")
 			@SuppressLint("NewApi")
 			@Override
 			public void onRefresh() {
 				// TODO Auto-generated method stub
 				mBleDeviceListAdapter.clear();
 				mBluetoothAdapter.startLeScan(mLeScanCallback);
-				scanning = true;
 				swagLayout.setRefreshing(false);
 			}
 		});
@@ -142,10 +140,18 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		mBleDeviceListAdapter.clear();
-		mBluetoothAdapter.startLeScan(mLeScanCallback);
+		new Thread(new Runnable() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mBluetoothAdapter.startLeScan(mLeScanCallback);
+			}
+		}).start();
+
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
 	protected void onDestroy() {
@@ -153,7 +159,6 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 		mBluetoothAdapter.stopLeScan(mLeScanCallback);
 		mBleDeviceListAdapter.clear();
-		scanning = false;
 		mBluetoothAdapter.cancelDiscovery();
 		timer.cancel();
 	}
@@ -165,15 +170,14 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_stop:
 			mBluetoothAdapter.stopLeScan(mLeScanCallback);
-			scanning = false;
 			break;
-
 		case R.id.menu_autoconnect:
 			if (sharedPreferences.getBoolean("AutoConnect", true)) {
 				editor.putBoolean("AutoConnect", false);

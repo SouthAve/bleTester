@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -32,7 +31,6 @@ import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 public class CharacterisiticActivity extends Activity {
-	private final static String TAG = "CharacterisiticActivity";
 	ListView lv;
 	BluetoothAdapter mBluetoothAdapter;
 	CharacterisiticListAdapter charListAdapter;
@@ -42,7 +40,7 @@ public class CharacterisiticActivity extends Activity {
 	BluetoothGattService gattService;
 	int rssi;
 	private final ServiceConnection conn = new ServiceConnection() {
-		@SuppressLint("NewApi")
+		@SuppressLint({ "NewApi", "DefaultLocale" })
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder service) {
 			// TODO Auto-generated method stub

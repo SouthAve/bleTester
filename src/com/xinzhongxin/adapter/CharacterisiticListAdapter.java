@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.xinzhongxin.adapter.BleDeviceListAdapter.ViewHolder;
-import com.xinzhongxin.bletester.CharacterisiticActivity;
-import com.xinzhongxin.bletester.DeviceConnect;
 import com.xinzhongxinbletester.R;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class CharacterisiticListAdapter extends BaseAdapter {
-	private final static String TAG = CharacterisiticListAdapter.class
-			.getSimpleName();
 	ArrayList<BluetoothGattCharacteristic> chars;
 	ArrayList<HashMap<String, String>> charNames;
 	LayoutInflater mInflater;
@@ -49,7 +43,7 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 		return 0;
 	}
 
-	@SuppressLint("NewApi")
+	@SuppressLint({ "NewApi", "InflateParams" })
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
 		// TODO Auto-generated method stub
