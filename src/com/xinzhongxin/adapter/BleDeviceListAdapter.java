@@ -32,6 +32,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 			this.mLeDevices.add(device);
 			this.RSSIs.add(RSSI);
 			this.scanRecords.add(scanRecord);
+
 		} else {
 			for (int i = 0; i < mLeDevices.size(); i++) {
 				BluetoothDevice d = mLeDevices.get(i);

@@ -1,6 +1,7 @@
 package com.xinzhongxin.bletester;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +35,7 @@ public class MainActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	private LeScanCallback mLeScanCallback;
 	BleDeviceListAdapter mBleDeviceListAdapter;
-
+	boolean isExit;
 	Handler handler;
 
 	SharedPreferences sharedPreferences;
@@ -192,6 +194,29 @@ public class MainActivity extends Activity {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			exitBy2Click(); // 调用双击退出函数
+		}
+		return false;
+	}
+
+	private void exitBy2Click() {
+		if (!isExit) {
+			isExit = true;
+			Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+			new Timer().schedule(new TimerTask() {
+				public void run() {
+					isExit = false; // 取消退出
+				}
+			}, 2000);
+		} else {
+			finish();
+			System.exit(0);
+		}
+
 	}
 
 }
