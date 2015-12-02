@@ -2,6 +2,7 @@ package com.xinzhongxin.adapter;
 
 import java.util.ArrayList;
 
+import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 import android.annotation.SuppressLint;
@@ -84,6 +85,8 @@ public class BleDeviceListAdapter extends BaseAdapter {
 					.findViewById(R.id.tv_devicelist_rssi);
 			viewholder.devicerecord = (TextView) view
 					.findViewById(R.id.tv_devicelist_scanRecord);
+			viewholder.devicerecord_name = (TextView) view
+					.findViewById(R.id.tv_devicelist_scanRecord_name);
 			view.setTag(viewholder);
 
 		} else {
@@ -99,6 +102,8 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		viewholder.deviceRSSI.setText("信号： " + RSSIs.get(position).toString());
 		viewholder.devicerecord.setText("广播包： " + "\n"
 				+ scanRecords.get(position));
+		viewholder.devicerecord_name.setText("广播包中的名称:" 
+				+ Utils.ParseScanRecord(scanRecords.get(position)));
 		return view;
 	}
 
@@ -107,6 +112,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		TextView deviceAddress;
 		TextView deviceRSSI;
 		TextView devicerecord;
+		TextView devicerecord_name;
 	}
 
 	public void clear() {
@@ -114,6 +120,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		mLeDevices.clear();
 		RSSIs.clear();
 		scanRecords.clear();
+		this.notifyDataSetChanged();
 	}
 
 }

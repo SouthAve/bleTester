@@ -21,8 +21,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.xinzhongxin.bletester.DeviceConnect;
-import com.xinzhongxin.bletester.MainActivity;
 import com.xinzhongxin.utils.DateUtil;
+import com.xinzhongxin.utils.Utils;
 
 public class BleService extends Service {
 	private final static String TAG = "BleService";
@@ -55,6 +55,10 @@ public class BleService extends Service {
 			.fromString("00001802-0000-1000-8000-00805f9b34fb");
 	public static final UUID RX_SERVICE_UUID = UUID
 			.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");// DE5BF728-D711-4E47-AF26-65E3012A5DC7
+	public static final UUID MY_SERVICE_UUID = UUID
+			.fromString("0000fff0-0000-1000-8000-00805f9b34fb");
+	public static final UUID MY_CHAR_UUID = UUID
+			.fromString("0000fff4-0000-1000-8000-00805f9b34fb");
 	public static final UUID RX_CHAR_UUID = UUID
 			.fromString("00002A06-0000-1000-8000-00805f9b34fb");// DE5BF729-D711-4E47-AF26-65E3012A5DC7
 	public static final UUID TX_CHAR_UUID = UUID
@@ -82,7 +86,6 @@ public class BleService extends Service {
 				mConnectionState = STATE_CONNECTED;
 				broadcastUpdate(intentAction);
 				gatt.discoverServices();
-
 			} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 				intentAction = ACTION_GATT_DISCONNECTED;
 				mConnectionState = STATE_DISCONNECTED;
@@ -96,7 +99,7 @@ public class BleService extends Service {
 			if (status == BluetoothGatt.GATT_SUCCESS) {
 				broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
 			} else {
-				Log.w(TAG, "" + status);
+				Log.w("mylog", "service null");
 			}
 		}
 
@@ -127,7 +130,6 @@ public class BleService extends Service {
 			sendBroadcast(rssiIntent);
 			if (mBluetoothGatt != null) {
 				new Thread(new Runnable() {
-
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
@@ -157,7 +159,7 @@ public class BleService extends Service {
 			mIntent.putExtra("desriptor2", des.get(1).getUuid().toString());
 		}
 		mIntent.putExtra("StringValue", characteristic.getStringValue(0));
-		String hexValue = MainActivity.bytesToHex(characteristic.getValue());
+		String hexValue = Utils.bytesToHex(characteristic.getValue());
 		mIntent.putExtra("HexValue", hexValue.toString());
 		mIntent.putExtra("time", DateUtil.getCurrentDatatime());
 		sendBroadcast(mIntent);
@@ -171,7 +173,6 @@ public class BleService extends Service {
 	}
 
 	private void broadcastUpdate(String action) {
-
 		Intent mIntent = new Intent(action);
 		sendBroadcast(mIntent);
 	}

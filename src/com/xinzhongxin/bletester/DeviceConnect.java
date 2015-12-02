@@ -121,6 +121,7 @@ public class DeviceConnect extends Activity {
 						servicesListAdapter.addServiceNames(serviceNames);
 						servicesListAdapter.addService(gattServices);
 						servicesListAdapter.notifyDataSetChanged();
+
 					}
 				});
 

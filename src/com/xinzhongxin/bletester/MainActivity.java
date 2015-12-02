@@ -27,6 +27,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.xinzhongxin.adapter.BleDeviceListAdapter;
+import com.xinzhongxin.utils.Utils;
 import com.xinzhongxinbletester.R;
 
 public class MainActivity extends Activity {
@@ -40,7 +41,6 @@ public class MainActivity extends Activity {
 
 	SharedPreferences sharedPreferences;
 	Editor editor;
-	Timer timer = new Timer();
 
 	@SuppressLint("NewApi")
 	@Override
@@ -53,6 +53,14 @@ public class MainActivity extends Activity {
 		init();
 		getBleAdapter();
 		getScanResualt();
+		new Thread(new Runnable() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				mBluetoothAdapter.startLeScan(mLeScanCallback);
+			}
+		}).start();
 	}
 
 	private void init() {
@@ -94,26 +102,13 @@ public class MainActivity extends Activity {
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
 						mBleDeviceListAdapter.addDevice(device, rssi,
-								bytesToHex(scanRecord));
+								Utils.bytesToHex(scanRecord));
 						mBleDeviceListAdapter.notifyDataSetChanged();
 						invalidateOptionsMenu();
 					}
 				});
 			}
 		};
-
-	}
-
-	static final char[] hexArray = "0123456789ABCDEF".toCharArray();
-
-	public static String bytesToHex(byte[] bytes) {
-		char[] hexChars = new char[bytes.length * 2];
-		for (int j = 0; j < bytes.length; j++) {
-			int v = bytes[j] & 0xFF;
-			hexChars[j * 2] = hexArray[v >>> 4];
-			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-		}
-		return new String(hexChars);
 	}
 
 	private void setListItemListener() {
@@ -132,7 +127,6 @@ public class MainActivity extends Activity {
 				intent.putExtra(DeviceConnect.EXTRAS_DEVICE_ADDRESS,
 						device.getAddress());
 				startActivity(intent);
-				onDestroy();
 			}
 		});
 	}
@@ -142,15 +136,6 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		new Thread(new Runnable() {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				mBluetoothAdapter.startLeScan(mLeScanCallback);
-			}
-		}).start();
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -162,7 +147,6 @@ public class MainActivity extends Activity {
 		mBluetoothAdapter.stopLeScan(mLeScanCallback);
 		mBleDeviceListAdapter.clear();
 		mBluetoothAdapter.cancelDiscovery();
-		timer.cancel();
 	}
 
 	@Override
@@ -213,10 +197,10 @@ public class MainActivity extends Activity {
 				}
 			}, 2000);
 		} else {
+			onDestroy();
 			finish();
 			System.exit(0);
 		}
-
 	}
 
 }
