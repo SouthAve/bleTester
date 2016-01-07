@@ -101,14 +101,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			if ((prop & BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
 				bleService.mBluetoothGatt.setCharacteristicNotification(
 						gattChar, false);
-
 			}
 			if ((prop & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
 				bleService.mBluetoothGatt.setCharacteristicNotification(
 						gattChar, true);
-
 			}
-
 		}
 
 		@Override
@@ -116,7 +113,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 			bleService = null;
 		}
-
 	};
 
 	BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -141,7 +137,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						.getString("HexValue");
 				final String readTime = intent.getExtras().getString("time");
 				runOnUiThread(new Runnable() {
-
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
@@ -179,7 +174,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						notify_resualt.setText(text_string);
+						 notify_resualt.setText(text_string);
 						resultcount.setText("×Ö½ÚÊý£º " + resultLength);
 					}
 				});
@@ -247,17 +242,17 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				if (arg1 == R.id.rb_string) {
 					if (text_string != null) {
 						if (isNotifyHex) {
-							text_string = hexStr2Str(text_string);
+							 text_string = hexStr2Str(text_string);
 						}
-						notify_resualt.setText(text_string);
+						 notify_resualt.setText(text_string);
 					}
 					isNotifyHex = false;
 				} else {
 					if (text_string != null) {
 						if (!isNotifyHex) {
-							text_string = str2HexStr(text_string);
+							 text_string = str2HexStr(text_string);
 						}
-						notify_resualt.setText(text_string);
+						 notify_resualt.setText(text_string);
 					}
 					isNotifyHex = true;
 				}
