@@ -174,7 +174,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						 notify_resualt.setText(text_string);
+						notify_resualt.setText(text_string);
 						resultcount.setText("×Ö½ÚÊý£º " + resultLength);
 					}
 				});
@@ -242,17 +242,17 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				if (arg1 == R.id.rb_string) {
 					if (text_string != null) {
 						if (isNotifyHex) {
-							 text_string = hexStr2Str(text_string);
+							text_string = hexStr2Str(text_string);
 						}
-						 notify_resualt.setText(text_string);
+						notify_resualt.setText(text_string);
 					}
 					isNotifyHex = false;
 				} else {
 					if (text_string != null) {
 						if (!isNotifyHex) {
-							 text_string = str2HexStr(text_string);
+							text_string = str2HexStr(text_string);
 						}
-						 notify_resualt.setText(text_string);
+						notify_resualt.setText(text_string);
 					}
 					isNotifyHex = true;
 				}
@@ -558,8 +558,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 										byte[] str = str2Byte(charvalue);
 										gattChar.setValue(str);
 									} else {
-										write_byte_number += charvalue.length()
-												+ charvalue.length() % 2;
+										write_byte_number += charvalue.length();
 										gattChar.setValue(charvalue);
 									}
 									bleService.mBluetoothGatt

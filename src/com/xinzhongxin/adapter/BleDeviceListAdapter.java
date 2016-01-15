@@ -1,5 +1,6 @@
 package com.xinzhongxin.adapter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.xinzhongxin.utils.Utils;
@@ -8,6 +9,7 @@ import com.xinzhongxinbletester.R;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +90,6 @@ public class BleDeviceListAdapter extends BaseAdapter {
 			viewholder.devicerecord_name = (TextView) view
 					.findViewById(R.id.tv_devicelist_scanRecord_name);
 			view.setTag(viewholder);
-
 		} else {
 			viewholder = (ViewHolder) view.getTag();
 		}
@@ -96,13 +97,13 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		if (name != null)
 			viewholder.devicename.setText(name);
 		else
-			viewholder.devicename.setText("Unknow Device");
+		viewholder.devicename.setText("Unknow Device");
 		viewholder.deviceAddress.setText("地址： "
 				+ mLeDevices.get(position).getAddress());
 		viewholder.deviceRSSI.setText("信号： " + RSSIs.get(position).toString());
 		viewholder.devicerecord.setText("广播包： " + "\n"
 				+ scanRecords.get(position));
-		viewholder.devicerecord_name.setText("广播包中的名称:" 
+		viewholder.devicerecord_name.setText("广播包中的名称:"
 				+ Utils.ParseScanRecord(scanRecords.get(position)));
 		return view;
 	}
