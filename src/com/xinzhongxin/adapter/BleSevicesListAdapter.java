@@ -4,21 +4,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.xinzhongxinbletester.R;
-
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.xinzhongxinbletester.R;
+
 public class BleSevicesListAdapter extends BaseAdapter {
 	public static final String TAG = BleSevicesListAdapter.class
 			.getSimpleName();
-	private LayoutInflater mInflater;// 得到一个LayoutInfalter对象用来导入布局
+	private LayoutInflater mInflater;
 	private ArrayList<BluetoothGattService> services;
 	private ArrayList<HashMap<String, String>> serviceName;
 
@@ -55,6 +60,12 @@ public class BleSevicesListAdapter extends BaseAdapter {
 		this.serviceName = (ArrayList<HashMap<String, String>>) serviceName;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.widget.Adapter#getView(int, android.view.View,
+	 * android.view.ViewGroup)
+	 */
 	@SuppressLint({ "NewApi", "InflateParams" })
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
@@ -77,8 +88,13 @@ public class BleSevicesListAdapter extends BaseAdapter {
 			viewholder = (ViewHolder) view.getTag();
 		}
 		viewholder.servicesname.setText(serviceName.get(position).get("Name"));
-		viewholder.servicesUUID.setText(services.get(position).getUuid()
-				.toString());
+		SpannableString span = new SpannableString(services.get(position)
+				.getUuid().toString());
+		span.setSpan(new ForegroundColorSpan(Color.BLUE), 0, 8,
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		span.setSpan(new StyleSpan(android.graphics.Typeface.BOLD_ITALIC), 0,
+				8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		viewholder.servicesUUID.setText(span);
 		viewholder.servicesInID.setText("Instance Id: "
 				+ services.get(position).getInstanceId());
 		if (services.get(position).getType() == 0) {

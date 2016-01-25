@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/about1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="如果有疑问，或者有好的建议，请联系:" />
+
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about1"
+        android:layout_centerHorizontal="true"
+        android:autoLink="email"
+        android:text="yhyin225@gmail.com" />
+
+    <TextView
+        android:id="@+id/tv_github"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about2"
+        android:layout_centerHorizontal="true"
+        android:autoLink="web"
+        android:gravity="center"
+        android:text="https://github.com/SouthAve/bleTester" />
+
+    <TextView
+        android:id="@+id/about2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_email"
+        android:text="代码已在github上开源，欢迎fork和pull request和star" />
+
+</RelativeLayout>

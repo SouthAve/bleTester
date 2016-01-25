@@ -53,7 +53,6 @@ public class DeviceConnect extends Activity {
 	boolean isConnecting = false;
 	boolean isAlarm = false;
 	List<BluetoothGattService> gattServices = new ArrayList<BluetoothGattService>();
-	// BLE Sevice
 	BleService bleService;
 	int rssi;
 	private final ServiceConnection conn = new ServiceConnection() {
@@ -75,7 +74,6 @@ public class DeviceConnect extends Activity {
 		}
 	};
 
-	// 用于接收bleService的广播
 	BroadcastReceiver mbtBroadcastReceiver = new BroadcastReceiver() {
 
 		@SuppressLint({ "NewApi", "DefaultLocale" })
@@ -95,11 +93,9 @@ public class DeviceConnect extends Activity {
 			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
 				Toast.makeText(DeviceConnect.this, "设备断开！", Toast.LENGTH_LONG)
 						.show();
-				// 断开后重连
 				if (sharedPreferences.getBoolean("AutoConnect", true)) {
 					bleService.connect(bleAddress);
 				}
-
 			}
 			if (BleService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				String uuid = null;
@@ -111,7 +107,7 @@ public class DeviceConnect extends Activity {
 					uuid = ser.getUuid().toString().toUpperCase();
 					currentServiceData.put("Name", Utils.BLE_SERVICES
 							.containsValue(uuid) ? Utils.BLE_SERVICES.get(uuid)
-							: "UnknownService");
+							: "Unknown Service");
 					serviceNames.add(currentServiceData);
 				}
 				runOnUiThread(new Runnable() {

@@ -93,13 +93,12 @@ public class BleService extends Service {
 			}
 		}
 
-		// 当Service成功发现后
 		@Override
 		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 			if (status == BluetoothGatt.GATT_SUCCESS) {
 				broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
 			} else {
-				Log.w("mylog", "service null");
+				Log.w("mylog", "service is null");
 			}
 		}
 
@@ -163,13 +162,12 @@ public class BleService extends Service {
 		mIntent.putExtra("HexValue", hexValue.toString());
 		mIntent.putExtra("time", DateUtil.getCurrentDatatime());
 		sendBroadcast(mIntent);
-
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
-		return mBinder; // 返回了一个mBinder对象，而调用这个对象的getservice可以获得bleService对象
+		return mBinder;
 	}
 
 	private void broadcastUpdate(String action) {
@@ -188,7 +186,7 @@ public class BleService extends Service {
 		if (data != null && data.length > 0) {
 			final StringBuilder stringBuilder = new StringBuilder(data.length);
 			for (byte byteChar : data) {
-				// 十六进制ASCII
+				Log.v("service", byteChar + "\n");
 				stringBuilder.append(String.format("%X", byteChar));
 			}
 			if (stringData != null) {

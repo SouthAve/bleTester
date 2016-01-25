@@ -182,7 +182,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			if (BleService.ACTION_GATT_DISCONNECTED.equals(action)) {
 				Toast.makeText(ChangeCharActivity.this, "设备连接断开",
 						Toast.LENGTH_SHORT).show();
-				// 断开后重连
 				if (sharedPreferences.getBoolean("AutoConnect", true)) {
 					bleService.connect(DeviceConnect.bleAddress);
 				}
@@ -307,9 +306,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		unregisterReceiver(mBroadcastReceiver);
 	}
 
-	/**
-	 * 
-	 */
 	@SuppressLint("InflateParams")
 	public void writeDialog() {
 		AlertDialog.Builder dialog = new Builder(this);
@@ -580,7 +576,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 						}
 					}
 				}).start();
-				;
 			}
 		});
 		dialog.setView(dialogview);
@@ -670,7 +665,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			n = str.indexOf(hexs[2 * i]) * 16;
 			n += str.indexOf(hexs[2 * i + 1]);
 			bytes[i] = (byte) (n & 0xff);
-			System.out.println(bytes[i]);
 		}
 		return new String(bytes);
 	}
@@ -684,11 +678,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		byte[] bytes = new byte[hexStr.length() / 2];
 		for (int i = 0; i < bytes.length; i++) {
 			a[i] = hexStr.substring(2 * i, 2 * i + 2);
-			System.out.println(a[i].toString());
 		}
 		for (int i = 0; i < bytes.length; i++) {
 			bytes[i] = (byte) Integer.parseInt(a[i], 16);
-			System.out.println(bytes[i]);
 		}
 		return bytes;
 	}

@@ -1,6 +1,5 @@
 package com.xinzhongxin.adapter;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.xinzhongxin.utils.Utils;
@@ -9,7 +8,6 @@ import com.xinzhongxinbletester.R;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class BleDeviceListAdapter extends BaseAdapter {
-	private LayoutInflater mInflater;// 得到一个LayoutInfalter对象用来导入布局
+	private LayoutInflater mInflater;
 	private ArrayList<BluetoothDevice> mLeDevices;
 	private ArrayList<Integer> RSSIs;
 	private ArrayList<String> scanRecords;
@@ -26,16 +24,14 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		mLeDevices = new ArrayList<BluetoothDevice>();
 		RSSIs = new ArrayList<Integer>();
 		scanRecords = new ArrayList<String>();
-		this.mInflater = LayoutInflater.from(context); // 获得inflater实例
+		this.mInflater = LayoutInflater.from(context);
 	}
 
 	public void addDevice(BluetoothDevice device, int RSSI, String scanRecord) {
-
 		if (!mLeDevices.contains(device)) {
 			this.mLeDevices.add(device);
 			this.RSSIs.add(RSSI);
 			this.scanRecords.add(scanRecord);
-
 		} else {
 			for (int i = 0; i < mLeDevices.size(); i++) {
 				BluetoothDevice d = mLeDevices.get(i);
@@ -97,7 +93,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 		if (name != null)
 			viewholder.devicename.setText(name);
 		else
-		viewholder.devicename.setText("Unknow Device");
+			viewholder.devicename.setText("Unknow Device");
 		viewholder.deviceAddress.setText("地址： "
 				+ mLeDevices.get(position).getAddress());
 		viewholder.deviceRSSI.setText("信号： " + RSSIs.get(position).toString());

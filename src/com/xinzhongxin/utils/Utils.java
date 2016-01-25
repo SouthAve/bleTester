@@ -3,7 +3,6 @@ package com.xinzhongxin.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Utils {
 	public static Map<String, String> BLE_SERVICES = new HashMap<String, String>();
 	public static Map<String, String> BLE_CHARACTERISTICS = new HashMap<String, String>();

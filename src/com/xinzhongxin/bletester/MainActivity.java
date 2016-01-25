@@ -175,14 +175,15 @@ public class MainActivity extends Activity {
 				Toast.makeText(this, "已设置为断开后自动连接", Toast.LENGTH_SHORT).show();
 			}
 			break;
+		case R.id.menu_about:
+			MainActivity.this.startActivity(new Intent(this,AboutActivity.class));
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			exitBy2Click(); // 调用双击退出函数
+			exitBy2Click();
 		}
 		return false;
 	}
@@ -193,7 +194,7 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
 			new Timer().schedule(new TimerTask() {
 				public void run() {
-					isExit = false; // 取消退出
+					isExit = false;
 				}
 			}, 2000);
 		} else {

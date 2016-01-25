@@ -9,6 +9,11 @@ import com.xinzhongxinbletester.R;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +72,13 @@ public class CharacterisiticListAdapter extends BaseAdapter {
 			viewholder = (ViewHolder) view.getTag();
 		}
 		viewholder.charName.setText(charNames.get(position).get("Name"));
-		viewholder.charUUID.setText(chars.get(position).getUuid().toString());
+		SpannableString span = new SpannableString(chars.get(position)
+				.getUuid().toString());
+		span.setSpan(new ForegroundColorSpan(Color.BLUE), 0, 8,
+				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		span.setSpan(new StyleSpan(android.graphics.Typeface.BOLD_ITALIC), 0,
+				8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		viewholder.charUUID.setText(span);
 		viewholder.charInID.setText("Instance ID: "
 				+ chars.get(position).getInstanceId());
 		viewholder.charProperty.setText("Property: "

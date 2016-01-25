@@ -35,7 +35,6 @@ public class CharacterisiticActivity extends Activity {
 	BluetoothAdapter mBluetoothAdapter;
 	CharacterisiticListAdapter charListAdapter;
 	UUID uuid;
-	// BLE Sevice
 	BleService bleService;
 	BluetoothGattService gattService;
 	int rssi;
@@ -57,7 +56,7 @@ public class CharacterisiticActivity extends Activity {
 						.put("Name",
 								Utils.BLE_CHARACTERISTICS.containsValue(uuid) ? Utils.BLE_CHARACTERISTICS
 										.get(uuidStr)
-										: "UnknownCharacteristics");
+										: "Unknown Characteristics");
 				charNames.add(currentCharData);
 			}
 			runOnUiThread(new Runnable() {
