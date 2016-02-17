@@ -105,8 +105,8 @@ public class DeviceConnect extends Activity {
 				for (BluetoothGattService ser : gattServices) {
 					HashMap<String, String> currentServiceData = new HashMap<String, String>();
 					uuid = ser.getUuid().toString();
-					currentServiceData.put("Name", Utils.BLE_SERVICES
-							.containsKey(uuid) ? Utils.BLE_SERVICES.get(uuid)
+					currentServiceData.put("Name", Utils.attributes
+							.containsKey(uuid) ? Utils.attributes.get(uuid)
 							: "Unknown Service");
 					serviceNames.add(currentServiceData);
 				}

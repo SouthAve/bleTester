@@ -51,12 +51,10 @@ public class CharacterisiticActivity extends Activity {
 					.getCharacteristics();
 			for (BluetoothGattCharacteristic c : gattchars) {
 				HashMap<String, String> currentCharData = new HashMap<String, String>();
-				String uuidStr = c.getUuid().toString().toUpperCase();
-				currentCharData
-						.put("Name",
-								Utils.BLE_CHARACTERISTICS.containsValue(uuid) ? Utils.BLE_CHARACTERISTICS
-										.get(uuidStr)
-										: "Unknown Characteristics");
+				String uuidStr = c.getUuid().toString();
+				currentCharData.put("Name", Utils.attributes
+						.containsKey(uuidStr) ? Utils.attributes.get(uuidStr)
+						: "Unknown Characteristics");
 				charNames.add(currentCharData);
 			}
 			runOnUiThread(new Runnable() {
