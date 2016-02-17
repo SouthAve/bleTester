@@ -21,6 +21,15 @@
         android:text="yhyin225@gmail.com" />
 
     <TextView
+        android:id="@+id/about2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_email"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="代码已在github上开源，欢迎fork和star和pull request" />
+
+    <TextView
         android:id="@+id/tv_github"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,10 +40,12 @@
         android:text="https://github.com/SouthAve/bleTester" />
 
     <TextView
-        android:id="@+id/about2"
+        android:id="@+id/help1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_email"
-        android:text="代码已在github上开源，欢迎fork和pull request和star" />
+        android:layout_below="@+id/tv_github"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="通知的结果保存在SD根目录下txt" />
 
 </RelativeLayout>
