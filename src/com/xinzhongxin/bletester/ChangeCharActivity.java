@@ -1,5 +1,8 @@
 package com.xinzhongxin.bletester;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
@@ -17,6 +20,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -48,8 +52,9 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 	Button readButton;
 	Button clear_result;
 	Button notifyButton;
+	Button save_result;
 	ScrollView scroll;
-	EditText notify_resualt;
+	TextView notify_resualt;
 	RadioGroup radioGroup;
 	RadioButton format_hex;
 	RadioButton format_string;
@@ -139,7 +144,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
+						// TODO Auto-generated methdo stub
 						charString.setText("字符串: " + stringValue);
 						charHex.setText("十六进制: " + hexValue);
 						time.setText("读取时间: " + readTime);
@@ -185,7 +190,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				if (sharedPreferences.getBoolean("AutoConnect", true)) {
 					bleService.connect(DeviceConnect.bleAddress);
 				}
-
 			}
 		}
 	};
@@ -208,6 +212,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_changechar);
+		getActionBar().setTitle("特征操作");
 		sharedPreferences = this
 				.getSharedPreferences("writedata", MODE_PRIVATE);
 		editor = sharedPreferences.edit();
@@ -228,11 +233,11 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		readButton = (Button) findViewById(R.id.btn_read);
 		notifyButton = (Button) findViewById(R.id.btn_notify);
 		clear_result = (Button) findViewById(R.id.clear_result);
-		notify_resualt = (EditText) findViewById(R.id.et_notify_resualt);
+		save_result = (Button) findViewById(R.id.save_result);
+		notify_resualt = (TextView) findViewById(R.id.et_notify_resualt);
 		resultcount = (TextView) findViewById(R.id.result_count);
 		scroll = (ScrollView) findViewById(R.id.scrollview);
 		radioGroup = (RadioGroup) findViewById(R.id.rg_hex_string);
-
 		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -282,6 +287,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			scroll.setVisibility(View.VISIBLE);
 			resultcount.setVisibility(View.VISIBLE);
 			clear_result.setVisibility(View.VISIBLE);
+			save_result.setVisibility(View.VISIBLE);
 		}
 		clear_result.setOnClickListener(new OnClickListener() {
 
@@ -296,6 +302,44 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 				resultcount.setText("字节数:0");
 			}
 		});
+		save_result.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				saveResualt(notify_resualt.getText().toString());
+			}
+		});
+	}
+
+	private void saveResualt(String result) {
+		// TODO Auto-generated method stub
+		if (result.isEmpty()) {
+			Toast.makeText(this, "没有可保存的内容！", Toast.LENGTH_SHORT).show();
+		} else {
+			try {
+				File file = new File(Environment.getExternalStorageDirectory(),
+						"BLElog" + System.currentTimeMillis() + ".txt");
+				if (!file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
+				}
+				if (!file.exists())
+					file.createNewFile();
+				FileOutputStream out = new FileOutputStream(file);
+				OutputStreamWriter writer = new OutputStreamWriter(out);
+				writer.write(result);
+				writer.flush();
+				writer.close();
+				out.close();
+				Toast.makeText(
+						ChangeCharActivity.this,
+						"BLElog" + System.currentTimeMillis()
+								+ ".txt文件成功保存到SD卡根目录下", Toast.LENGTH_SHORT)
+						.show();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -413,7 +457,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
 					int arg3) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -548,7 +591,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 										.toString();
 								if (!charvalue.isEmpty()) {
 									if (isHex) {
-
 										write_byte_number += charvalue.length()
 												/ 2 + charvalue.length() % 2;
 										byte[] str = str2Byte(charvalue);
@@ -572,7 +614,7 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 								}
 							}
 						} catch (Exception e) {
-							// TODO: handle exception
+							e.printStackTrace();
 						}
 					}
 				}).start();
@@ -646,7 +688,6 @@ public class ChangeCharActivity extends Activity implements OnClickListener {
 		StringBuilder sb = new StringBuilder("");
 		byte[] bs = str.getBytes();
 		int bit;
-
 		for (int i = 0; i < bs.length; i++) {
 			bit = (bs[i] & 0x0f0) >> 4;
 			sb.append(chars[bit]);

@@ -82,7 +82,7 @@
         android:background="@drawable/shape"
         android:visibility="invisible" >
 
-        <EditText
+        <TextView
             android:id="@+id/et_notify_resualt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -90,7 +90,7 @@
             android:editable="false"
             android:focusable="false"
             android:gravity="top"
-            android:hint="此处显示通知的值" />
+            android:hint="(此处显示通知的值)" />
     </ScrollView>
 
     <LinearLayout
@@ -111,6 +111,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="清空"
+            android:textSize="15dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/save_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="保存"
             android:textSize="15dp"
             android:visibility="invisible" />
     </LinearLayout>

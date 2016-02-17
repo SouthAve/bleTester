@@ -73,6 +73,9 @@ public class BleService extends Service {
 			.fromString("00002a19-0000-1000-8000-00805f9b34fb");
 
 	private final IBinder mBinder = new LocalBinder();
+	public String notify_result;
+	public String notify_string_result;
+	public int notify_result_length;
 
 	@SuppressLint("NewApi")
 	public BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
@@ -182,11 +185,9 @@ public class BleService extends Service {
 		intent.setAction(action);
 		final byte[] data = characteristic.getValue();
 		final String stringData = characteristic.getStringValue(0);
-
 		if (data != null && data.length > 0) {
 			final StringBuilder stringBuilder = new StringBuilder(data.length);
 			for (byte byteChar : data) {
-				Log.v("service", byteChar + "\n");
 				stringBuilder.append(String.format("%X", byteChar));
 			}
 			if (stringData != null) {
@@ -194,8 +195,11 @@ public class BleService extends Service {
 			} else {
 				Log.v("tag", "characteristic.getStringValue is null");
 			}
-			intent.putExtra(EXTRA_DATA, stringBuilder.toString());
-			intent.putExtra(EXTRA_DATA_LENGTH, data.length);
+			notify_result = stringBuilder.toString();
+			notify_string_result = stringData;
+			notify_result_length = data.length;
+			intent.putExtra(EXTRA_DATA, notify_result);
+			intent.putExtra(EXTRA_DATA_LENGTH, notify_result_length);
 		}
 		sendBroadcast(intent);
 	}
@@ -292,5 +296,4 @@ public class BleService extends Service {
 		super.onDestroy();
 		this.close(mBluetoothGatt);
 	}
-
 }

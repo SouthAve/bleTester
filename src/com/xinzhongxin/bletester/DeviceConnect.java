@@ -86,7 +86,7 @@ public class DeviceConnect extends Activity {
 					@Override
 					public void run() {
 						Toast.makeText(DeviceConnect.this, "设备连接成功！",
-								Toast.LENGTH_SHORT).show();
+								Toast.LENGTH_LONG).show();
 					}
 				});
 			}

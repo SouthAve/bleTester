@@ -176,7 +176,8 @@ public class MainActivity extends Activity {
 			}
 			break;
 		case R.id.menu_about:
-			MainActivity.this.startActivity(new Intent(this,AboutActivity.class));
+			MainActivity.this.startActivity(new Intent(this,
+					AboutActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
 	}
