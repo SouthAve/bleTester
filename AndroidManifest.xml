@@ -36,6 +36,8 @@
         </activity>
         <activity android:name="com.xinzhongxin.bletester.AboutActivity" >
         </activity>
+             <activity android:name="com.xinzhongxin.bletester.QrcodeActivity" >
+        </activity>
 
         <service android:name="com.xinzhongxin.service.BleService" >
         </service>

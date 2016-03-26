@@ -10,4 +10,5 @@
     <string name="menu_autoconnect">自动连接</string>
     <string name="RSSI">RSSI</string>
     <string name="menu_about">关于</string>
+    <string name="menu_qrcode">二维码扫描下载APP</string>
 </resources>

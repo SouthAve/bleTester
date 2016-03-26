@@ -19,7 +19,13 @@
         android:title="@string/menu_autoconnect"/>
     <item
         android:id="@+id/menu_about"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:showAsAction="never"
         android:title="@string/menu_about"/>
+   <item
+        android:id="@+id/menu_qrcode"
+        android:orderInCategory="104"
+        android:showAsAction="never"
+        android:title="@string/menu_qrcode"/>
+
 </menu>

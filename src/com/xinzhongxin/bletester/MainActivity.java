@@ -178,6 +178,9 @@ public class MainActivity extends Activity {
 		case R.id.menu_about:
 			MainActivity.this.startActivity(new Intent(this,
 					AboutActivity.class));
+		case R.id.menu_qrcode:
+			MainActivity.this.startActivity(new Intent(this,
+					QrcodeActivity.class));
 		}
 		return super.onOptionsItemSelected(item);
 	}
